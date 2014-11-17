@@ -33,7 +33,7 @@
                                 </path>
                                 <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
                                     <arg line="-uri src/main/resources/APIPublisher.wsdl -u -uw -o target/generated-code
-                                    -p org.wso2.carbon.dssapi.ui.stub"/>
+                                    -p org.wso2.carbon.dssapi.stub"/>
                                     <classpath refid="wsdl2java.classpath"/>
                                 </java>
                             </tasks>
@@ -73,7 +73,7 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <Export-Package>
-                            org.wso2.carbon.dssapi.ui.stub.*
+                            org.wso2.carbon.dssapi.stub.*
                             version="${carbon.platform.package.export.version}"
                         </Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
