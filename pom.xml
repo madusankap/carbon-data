@@ -17,7 +17,6 @@
         <module>features/cassandra-jdbc-1.2.5</module>
         <module>features/data-services</module>
         <module>features/dbconsole</module>
-        <module>components/api-everywhere</module>
     </modules>
 
     <dependencyManagement>
