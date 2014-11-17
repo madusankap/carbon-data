@@ -18,6 +18,7 @@
         <module>features/data-services</module>
         <module>features/dbconsole</module>
         <module>components/dss-api</module>
+        <module>service-stubs/dss-api-stub</module>
     </modules>
 
     <dependencyManagement>
@@ -352,6 +353,11 @@
                 <groupId>com.datastax.cassandra.wso2</groupId>
                 <artifactId>cassandra-driver-core</artifactId>
                 <version>${cassandra-java-driver.wso2.version.data-services}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.1.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
