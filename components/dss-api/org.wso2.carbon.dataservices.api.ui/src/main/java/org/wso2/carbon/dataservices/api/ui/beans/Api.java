@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.dataservices.ui.beans;
+package org.wso2.carbon.dataservices.api.ui.beans;
 
 import java.util.List;
 
