@@ -50,10 +50,6 @@ public class DataServiceAdminClient {
         }
     }
     
-    public String validateJSONMapping(String jsonMapping) throws RemoteException {
-        return stub.validateJSONMapping(jsonMapping);
-    }
-    
 	public String getDataServiceContents(String serviceId) throws RemoteException {
         return stub.getDataServiceContentAsString(serviceId);
 	}
@@ -152,22 +148,22 @@ public class DataServiceAdminClient {
      */                                                
 
     public String[] getDSServiceList(String dataSourceId, String dbName, String[] schemas,
-                                          String[] tableNames,String serviceNamespace) throws Exception{
+                                          String[] tableNames,String serviceNamespace) {
         try {
             return stub.getDSServiceList(dataSourceId, dbName, schemas, tableNames, false,
                     serviceNamespace);
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            return null;
         }
     }
 
     public String getDSService(String dataSourceId, String dbName, String[] schemas,
-                               String[] tableNames, String serviceName, String serviceNamespace) throws Exception{
+                               String[] tableNames, String serviceName, String serviceNamespace) {
         try {
             return stub.getDSService(dataSourceId, dbName, schemas, tableNames, true, serviceName,
                     serviceNamespace);
         } catch (Exception e) {
-                throw new Exception(e.getMessage());
+            return null;
         }
     }
 

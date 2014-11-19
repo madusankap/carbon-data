@@ -178,6 +178,7 @@
          	<xs:attribute name="name" type="xs:string" use="required"/>
          	<xs:attribute name="enableBatchRequests" type="xs:boolean" use="optional"/>
          	<xs:attribute name="enableBoxcarring" type="xs:boolean" use="optional"/>
+		<xs:attribute name="managedApi" type="xs:boolean" use="optional"/>
                 <xs:attribute name="serviceGroup" type="xs:string" use="optional"/>
          	<xs:attribute name="serviceStatus" use="optional">
              		<xs:simpleType>

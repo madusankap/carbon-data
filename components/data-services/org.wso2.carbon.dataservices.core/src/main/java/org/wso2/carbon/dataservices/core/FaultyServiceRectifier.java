@@ -18,6 +18,8 @@
  */
 package org.wso2.carbon.dataservices.core;
 
+import java.io.File;
+
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.util.Utils;
@@ -26,8 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.dataservices.common.DBConstants;
-
-import java.io.File;
 
 /**
  * This class represents a runnable class which re-deployes a data service after a fixed internal,
@@ -48,7 +48,7 @@ public class FaultyServiceRectifier implements Runnable {
 		this.deploymentFileData = deploymentData;
 		this.configurationCtx = configCtx;
 		try {
-		    this.tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+		    this.tenantId = PrivilegedCarbonContext.getCurrentContext(this.configurationCtx).getTenantId();
 		} catch (Throwable e) {
 			/* this is done in the case of running unit tests, the above code fails */
 			this.tenantId = -1;
@@ -86,13 +86,11 @@ public class FaultyServiceRectifier implements Runnable {
 				}
 
 				DBDeployer dbDeployer = (DBDeployer) this.configurationCtx.getProperty(DBConstants.DB_SERVICE_DEPLOYER);
-
-				/* configurationCtx can be null when the tenant unload.
+                                /* configurationCtx.getAxisConfiguration() can be null when the tenant unload.
                                Therefore this task terminates */
-                               if (configurationCtx.getAxisConfiguration() == null) {
-                                       return;
-                               }
-
+                                if (configurationCtx.getAxisConfiguration() == null) {
+                                    return;
+                                }
 				/* check if the service is already deployed */
 				if (configurationCtx.getAxisConfiguration().getService(
 						getServiceNameFromPath(dbDeployer.getRepoDir(), file)) != null) {

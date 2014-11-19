@@ -72,15 +72,8 @@ public abstract class EventTrigger {
         this.targetTopic = targetTopic;
         this.endpointUrls = endpointUrls;
         if (!dataService.isServiceInactive()) {
-            DataServicesDSComponent.registerSubscriptions(this);
-        }
-    }
-
-    public void processEventTriggerSubscriptions() {
-        try {
-            this.registerSubscribers(DataServicesDSComponent.getEventBroker(), this.getTargetTopic(), this.getEndpointUrls());
-        } catch (Exception e) {
-            log.error("Error in processing event trigger subscriptions: " + e.getMessage());
+            this.registerSubscribers(DataServicesDSComponent.getEventBroker(), 
+            		this.getTargetTopic(), this.endpointUrls);
         }
     }
 
@@ -131,15 +124,15 @@ public abstract class EventTrigger {
         Subscription subscription;
         for (String epr : endpointUrls) {
             try {
-                int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
+                int tenantId = CarbonContext.getCurrentContext().getTenantId();
                 PrivilegedCarbonContext.startTenantFlow();
-                PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId, true);
-                PrivilegedCarbonContext.getThreadLocalCarbonContext().setUsername(
+                PrivilegedCarbonContext.getCurrentContext().setTenantId(tenantId);
+                PrivilegedCarbonContext.getCurrentContext().setUsername(
                         CarbonConstants.REGISTRY_SYSTEM_USERNAME);
                 RealmService realmService = DataServicesDSComponent.getRealmService();
                 if (realmService != null) {
                     try {
-                    	PrivilegedCarbonContext.getThreadLocalCarbonContext().setUserRealm(
+                    	PrivilegedCarbonContext.getCurrentContext().setUserRealm(
                                 realmService.getBootstrapRealm());
                     } catch (UserStoreException e) {
                         throw new DataServiceFault(e,
@@ -153,7 +146,7 @@ public abstract class EventTrigger {
                 subscription.setEventDispatcherName(EVENT_DISPATCHER_NAME);
                 //Setting subscription owner as wso2.system.user as there's no logged-in user
                 //at service deployment time.
-                subscription.setOwner(CarbonContext.getThreadLocalCarbonContext().getUsername());
+                subscription.setOwner(CarbonContext.getCurrentContext().getUsername());
                 subscription.setProperties(this.getSubscriptionProperties());
                 eventBroker.subscribe(subscription);
             } catch (Exception e) {

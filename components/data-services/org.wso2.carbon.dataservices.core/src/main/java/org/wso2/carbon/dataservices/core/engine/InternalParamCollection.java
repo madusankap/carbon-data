@@ -57,7 +57,7 @@ public class InternalParamCollection {
 	}
 	
 	public int getSize() {
-		return this.data.size();
+		return this.getParams().size();
 	}
 	
 	public void remove(int i) {

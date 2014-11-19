@@ -51,6 +51,7 @@
     String description = "";
     boolean boxcarring = false;
     boolean batchRequest = false;
+    boolean enableDT = false;
     boolean enableStreaming = true;
     boolean finishButton = false;
     String txManagerJNDIName = "";
@@ -78,6 +79,7 @@
                 protectedTokens = dataService.getProtectedTokens();
                 passwordProvider = dataService.getPasswordProvider();
                 boxcarring = dataService.isBoxcarring();
+                enableDT = dataService.isDTP();
                 //useAppServerTS = dataService.isUseAppServerTS();
                 batchRequest = dataService.isBatchRequest();
                 enableStreaming = !dataService.isDisableStreaming();
@@ -110,6 +112,7 @@
                 protectedTokens = data.getProtectedTokens();
                 passwordProvider = data.getPasswordProvider();
                 boxcarring = data.isBoxcarring();
+                enableDT = data.isDTP();
                 //useAppServerTS = data.isUseAppServerTS();
                 batchRequest = data.isBatchRequest();
                 data.setServiceHierarchy(detailedServiceName);
@@ -151,6 +154,7 @@
             passwordProvider = dataService.getPasswordProvider();
             passwordProvider = (passwordProvider == null) ? "" : passwordProvider;
             batchRequest = dataService.isBatchRequest();
+            enableDT = dataService.isDTP();
             enableStreaming = !dataService.isDisableStreaming();
             boxcarring = dataService.isBoxcarring();
         } else {
@@ -270,16 +274,32 @@
                                         key="service.enable.streaming"/></label></td>
                                     <%--<td><carbon:tooltips   image="images/help.gif" key='dataservices.task.interval.cannotfound.msg' noOfWordsPerLine='11'> </carbon:tooltips> </td>--%>
                             </tr>
+
+                            <tr id="addDistributedTransaction">
+
+                                    <%--<td><carbon:tooltips image="magnifier.gif" description='<%= getDescription() %>' noOfWordsPerLine='10' > </carbon:tooltips></td>--%>
+                                <td align="left">
+                                    <input type="checkbox" value="true" name="enableDT"
+                                           id="enableDT" <%=(enableDT) ? "checked=\"checked\"" : ""%>
+                                           onclick="onEnableXAChange(document);">
+                                </td>
+                                <td align="left"><label for="enableDT"><fmt:message
+                                        key="service.distributed.transactions"/></label></td>
+                                <%--<td colspan="2">--%>
+                                    <%--<a class="icon-link"--%>
+                                       <%--href="#" onclick="document.getElementById('txManagerNameRow').style.display='' "> Advanced</a>--%>
+                                <%--</td>--%>
+                            </tr>
                         </table>
                     </td>
                 </tr>
                 
-                <tr id="txManager">
+                <tr id="txManager" style="<%=(enableDT) ? "" : "display:none"%>">
                     <td>
-                        <table>
+                        <table style="margin-left: 40px;">
                            <tr>
                             <td colspan="2">
-                                <a id="txManagerJNDINameMax" onclick="showAdvancedServiceDetailsConfigurations()" style="background-image: none;" href="#" >Show Advanced Distributed Transactions Settings</a>
+                                <a id="txManagerJNDINameMax" onclick="showAdvancedServiceDetailsConfigurations()" style="background-image: none;" href="#" >Show Advanced</a>
                             </td>
                             </tr>
                             <tr id="txManagerNameRow" style="display:none">
@@ -317,11 +337,11 @@
         var advancedConfigFields = document.getElementById('txManagerNameRow');
         if (advancedConfigFields.style.display == 'none') {
             // symbolMax.setAttribute('style','background-image:url(images/minus.gif);');
-            symbolMax.innerHTML = 'Hive Advanced Distributed Transactions Settings';
+            symbolMax.innerHTML = 'Hide Advanced';
             advancedConfigFields.style.display = '';
         } else {
             //symbolMax.setAttribute('style','background-image:url(images/plus.gif);');
-            symbolMax.innerHTML = 'Show Advanced Distributed Transactions Settings';
+            symbolMax.innerHTML = 'Show Advanced';
             advancedConfigFields.style.display = 'none';
         }
     }

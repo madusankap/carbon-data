@@ -43,7 +43,6 @@ import org.wso2.carbon.base.MultitenantConstants;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.dataservices.common.DBConstants;
 import org.wso2.carbon.dataservices.common.DBConstants.DBSFields;
-import org.wso2.carbon.dataservices.common.DBConstants.ResultTypes;
 import org.wso2.carbon.dataservices.core.description.operation.Operation;
 import org.wso2.carbon.dataservices.core.description.query.Query;
 import org.wso2.carbon.dataservices.core.description.resource.Resource;
@@ -67,13 +66,11 @@ import javax.transaction.TransactionManager;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * Represents the custom Axis2 deployer used in deploying data-services .dbs files.
@@ -115,7 +112,6 @@ public class DBDeployer extends AbstractDeployer {
 	 * used for REST processing
 	 */
 	private Map<String, AxisOperation> httpLocationTable;
-    private Map<Pattern, AxisOperation> httpLocationTableForResource;
 
     /** cached transaction manager instance */
     private static TransactionManager cachedTransactionManager = null;
@@ -133,13 +129,13 @@ public class DBDeployer extends AbstractDeployer {
             RealmService realmService = DataServicesDSComponent.getRealmService();
             if (realmService != null) {
                 try {
-                	PrivilegedCarbonContext.getThreadLocalCarbonContext().setUserRealm(
+                	PrivilegedCarbonContext.getCurrentContext().setUserRealm(
                             realmService.getBootstrapRealm());
 				} catch (UserStoreException e) {
 					throw new DeploymentException(e);
 				}
             }
-            PrivilegedCarbonContext.getThreadLocalCarbonContext().setUsername(
+            PrivilegedCarbonContext.getCurrentContext().setUsername(
                     CarbonConstants.REGISTRY_SYSTEM_USERNAME);
 		} catch (Error e) {
 			/* during unit tests, this may occur */
@@ -300,7 +296,7 @@ public class DBDeployer extends AbstractDeployer {
 		/* retrieve tenant id */
 		int tid;
         try {
-        	tid = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+        	tid = PrivilegedCarbonContext.getCurrentContext(this.configCtx).getTenantId();
         } catch (ExceptionInInitializerError e) { 
         	/* workaround for unit test failures */
         	tid = MultitenantConstants.SUPER_TENANT_ID;
@@ -587,12 +583,8 @@ public class DBDeployer extends AbstractDeployer {
 		AxisBindingOperation httpBindingOperation = createDefaultHTTPBindingOperation(
 				axisOperation, httpLocation, method, httpBinding);
 
-        if(httpLocation.startsWith("/")){
-            httpLocation = httpLocation.substring(1);
-        }
-
-        Pattern httpLocationPattern = WSDLUtil.getConstantFromHTTPLocationForResource(httpLocation, method);
-        this.httpLocationTableForResource.put(httpLocationPattern, axisOperation);
+		String httpLocationString = WSDLUtil.getConstantFromHTTPLocation(httpLocation, method);
+		this.httpLocationTable.put(httpLocationString, axisOperation);
 
 		// Create the in and out axis messages for this operation
 		AxisMessage inMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
@@ -733,11 +725,10 @@ public class DBDeployer extends AbstractDeployer {
 				continue;
 			}
 			if (query.getResult() != null) {
-				if (query.getResult().getResultType() != ResultTypes.JSON &&
-				        DBUtils.isEmptyString(query.getResult().getElementName())) {
+				if (DBUtils.isEmptyString(query.getResult().getElementName())) {
 					throw new DataServiceFault("The request '" + request.getRequestName()
 							+ "' contains the query with id '" + query.getQueryId()
-							+ "' contains an XML result with no element wrapper.");
+							+ "' contains a result with no element wrapper.");
 				}
 			}
 		}
@@ -796,12 +787,6 @@ public class DBDeployer extends AbstractDeployer {
 							return (-1 * o1.compareTo(o2));
 						}
 					});
-            this.httpLocationTableForResource = new TreeMap<Pattern, AxisOperation>(
-                    new Comparator<Pattern>() {
-                        public int compare(Pattern o1, Pattern o2) {
-                            return (-1 * o1.pattern().compareTo(o2.pattern()));
-                        }
-                    });
 
 			AxisBinding soap11Binding = createDefaultSOAP11Binding(
 					serviceName, interfaceName);
@@ -976,7 +961,6 @@ public class DBDeployer extends AbstractDeployer {
 				SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 		soap11Binding.setProperty(WSDL2Constants.INTERFACE_LOCAL_NAME, interfaceName);
 		soap11Binding.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE, httpLocationTable);
-        soap11Binding.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE_FOR_RESOURCE, httpLocationTableForResource);
 		return soap11Binding;
 	}
 
@@ -989,7 +973,6 @@ public class DBDeployer extends AbstractDeployer {
 		httpBinding.setType(WSDL2Constants.URI_WSDL2_HTTP);
 		httpBinding.setProperty(WSDL2Constants.INTERFACE_LOCAL_NAME, interfaceName);
 		httpBinding.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE, httpLocationTable);
-        httpBinding.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE_FOR_RESOURCE, httpLocationTableForResource);
 		return httpBinding;
 	}
 
@@ -1006,7 +989,6 @@ public class DBDeployer extends AbstractDeployer {
 				SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 		soap12Binding.setProperty(WSDL2Constants.INTERFACE_LOCAL_NAME, interfaceName);
 		soap12Binding.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE, httpLocationTable);
-        soap12Binding.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE_FOR_RESOURCE, httpLocationTableForResource);
 		return soap12Binding;
 	}
 
@@ -1047,7 +1029,6 @@ public class DBDeployer extends AbstractDeployer {
 			soap11Endpoint.setParent(axisService);
 			soap11Endpoint.setTransportInDescription(transportInName);
 			soap11Endpoint.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE, httpLocationTable);
-            soap11Endpoint.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE_FOR_RESOURCE, httpLocationTableForResource);
 			axisService.addEndpoint(soap11EndpointName, soap11Endpoint);
 
             /* setting soap11 endpoint as the default endpoint */
@@ -1062,7 +1043,6 @@ public class DBDeployer extends AbstractDeployer {
 			soap12Endpoint.setParent(axisService);
 			soap12Endpoint.setTransportInDescription(transportInName);
 			soap12Endpoint.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE, httpLocationTable);
-            soap12Endpoint.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE_FOR_RESOURCE, httpLocationTableForResource);
 			axisService.addEndpoint(soap12EndpointName, soap12Endpoint);
 
 			/* Creates a HTTP endpoint if its http or https transport is used */
@@ -1075,7 +1055,6 @@ public class DBDeployer extends AbstractDeployer {
 				httpEndpoint.setParent(axisService);
 				httpEndpoint.setTransportInDescription(transportInName);
 				httpEndpoint.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE, httpLocationTable);
-                httpEndpoint.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE_FOR_RESOURCE, httpLocationTableForResource);
 				axisService.addEndpoint(httpEndpointName, httpEndpoint);
 			}
 		}

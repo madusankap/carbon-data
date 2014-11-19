@@ -189,7 +189,7 @@ public class XMLWriterHelper {
         }
 		switch (resultType) {
 		case DBConstants.ResultTypes.XML:
-			if (value != null && value.toString() != null) {
+			if (value != null) {
 			    xmlWriter.writeAttribute(name, value.toString());
 			}
 			break;

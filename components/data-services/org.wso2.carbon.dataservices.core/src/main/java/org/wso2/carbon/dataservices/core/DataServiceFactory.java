@@ -26,8 +26,6 @@ import org.wso2.carbon.dataservices.core.description.event.EventTriggerFactory;
 import org.wso2.carbon.dataservices.core.description.operation.Operation;
 import org.wso2.carbon.dataservices.core.description.operation.OperationFactory;
 import org.wso2.carbon.dataservices.core.description.query.QueryFactory;
-import org.wso2.carbon.dataservices.core.description.resource.Resource;
-import org.wso2.carbon.dataservices.core.description.resource.Resource.ResourceID;
 import org.wso2.carbon.dataservices.core.description.resource.ResourceFactory;
 import org.wso2.carbon.dataservices.core.engine.CallableRequest;
 import org.wso2.carbon.dataservices.core.engine.DataService;
@@ -37,7 +35,6 @@ import org.wso2.securevault.SecretResolverFactory;
 import org.wso2.securevault.SecurityConstants;
 
 import javax.xml.namespace.QName;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -107,6 +104,18 @@ public class DataServiceFactory {
             if (disableStreamingStr != null) {
                 disableStreaming = Boolean.parseBoolean(disableStreamingStr);
             }
+            boolean managedApi = false;
+            String managedApiStr = dbsElement.getAttributeValue(
+                    new QName(DBSFields.MANAGED_API));
+            if (managedApiStr != null) {
+                managedApi = Boolean.parseBoolean(managedApiStr);
+            }
+            /* transaction management */
+            boolean enableDTP = false;
+            String enableDTPStr = dbsElement.getAttributeValue(new QName(DBSFields.ENABLE_DTP));
+            if (enableDTPStr != null) {
+                enableDTP = Boolean.parseBoolean(enableDTPStr);
+            }
 
             /* txManagerName property */
             String userTxJNDIName = dbsElement.getAttributeValue(
@@ -114,7 +123,7 @@ public class DataServiceFactory {
 
             dataService = new DataService(serviceName, description,
                     defaultNamespace, dsLocation, serviceStatus,
-                    batchRequestsEnabled, boxcarringEnabled,
+                    batchRequestsEnabled, boxcarringEnabled, enableDTP,
                     userTxJNDIName);
             
             /* set service namespace */
@@ -122,7 +131,7 @@ public class DataServiceFactory {
 
             /* set disable streaming */
             dataService.setDisableStreaming(disableStreaming);
-
+            dataService.setManagedApi(managedApi);
             /* add the password manager */
             Iterator<OMElement> passwordMngrItr = dbsElement.getChildrenWithName(
                     new QName(SecurityConstants.PASSWORD_MANAGER_SIMPLE));
@@ -175,11 +184,34 @@ public class DataServiceFactory {
                             + dataService.getOperation(opName) + "for the result output type RDF");
                 }
             }
-            
-            /* add necessary equivalent batch requests for the above defined operations/resources */
+            /* add necessary equivalent batch operation for the above defined operation */
             if (dataService.isBatchRequestsEnabled()) {
-                populateBatchOperations(dataService);
-                populateBatchResources(dataService);
+                List<Operation> tmpOpList = new ArrayList<Operation>();
+                Operation operation;
+                for (String opName : dataService.getOperationNames()) {
+                    if (isBoxcarringOps(opName)) {
+                        /* skip boxcarring operations */
+                        continue;
+                    }
+                    operation = dataService.getOperation(opName);
+                    if (isBatchCompatible(operation)) {
+                        /* this is a batch operation and the parent operation is also given */
+                        Operation batchOp = new Operation(
+                                operation.getDataService(),
+                                operation.getName() + DBConstants.BATCH_OPERATON_NAME_SUFFIX,
+                                "batch operation for '" + operation.getName() + "'",
+                                operation.getCallQueryGroup(), true,
+                                operation, operation.isDisableStreamingRequest(),
+                                operation.isDisableStreamingEffective());
+                        batchOp.setReturnRequestStatus(operation.isReturnRequestStatus());
+                        tmpOpList.add(batchOp);
+                    }
+                }
+                /* the operations are added outside the loop that iterates the operation list,
+                     * if we add it inside the loop while iterating, we will get a concurrent modification exception */
+                for (Operation tmpOp : tmpOpList) {
+                    dataService.addOperation(tmpOp);
+                }
             }
 
             return dataService;
@@ -192,66 +224,6 @@ public class DataServiceFactory {
             DataServiceFault dsf = new DataServiceFault(e);
             dsf.setSourceDataService(dataService);
             throw dsf;
-        }
-    }
-    
-    private static void populateBatchOperations(DataService dataService) {
-        List<Operation> tmpOpList = new ArrayList<Operation>();
-        Operation operation;
-        for (String opName : dataService.getOperationNames()) {
-            if (isBoxcarringOps(opName)) {
-                /* skip boxcarring operations */
-                continue;
-            }
-            operation = dataService.getOperation(opName);
-            if (isBatchCompatible(operation)) {
-                /* this is a batch operation and the parent operation is also given */
-                Operation batchOp = new Operation(
-                        operation.getDataService(),
-                        operation.getName() + DBConstants.BATCH_OPERATON_NAME_SUFFIX,
-                        "batch operation for '" + operation.getName() + "'",
-                        operation.getCallQueryGroup(), true,
-                        operation, operation.isDisableStreamingRequest(),
-                        operation.isDisableStreamingEffective());
-                batchOp.setReturnRequestStatus(operation.isReturnRequestStatus());
-                tmpOpList.add(batchOp);
-            }
-        }
-        /* the operations are added outside the loop that iterates the operation list,
-         * if we add it inside the loop while iterating, we will get a concurrent modification exception */
-        for (Operation tmpOp : tmpOpList) {
-            dataService.addOperation(tmpOp);
-        }
-    }
-    
-    private static String getBatchResourcePath(String path) {
-        if (path.endsWith("/")) {
-            return path.substring(0, path.length() - 1) + DBConstants.BATCH_OPERATON_NAME_SUFFIX + "/";
-        } else {
-            return path + DBConstants.BATCH_OPERATON_NAME_SUFFIX;
-        }
-    }
-    
-    private static void populateBatchResources(DataService dataService) {
-        List<Resource> tmpOpList = new ArrayList<Resource>();
-        Resource resource;
-        ResourceID batchResId;
-        for (ResourceID resId : dataService.getResourceIds()) {
-            resource = dataService.getResource(resId);
-            if (isBatchCompatible(resource)) {
-                batchResId = new ResourceID(getBatchResourcePath(resId.getPath()), resId.getMethod());
-                Resource batchRes = new Resource(
-                        resource.getDataService(), batchResId,
-                        "batch resource for [" + resId.getMethod() + ":" + resId.getPath() + "]",
-                        resource.getCallQueryGroup(), true, resource,
-                        resource.isDisableStreamingRequest(),
-                        resource.isDisableStreamingEffective());
-                batchRes.setReturnRequestStatus(resource.isReturnRequestStatus());
-                tmpOpList.add(batchRes);
-            }
-        }
-        for (Resource tmpRes : tmpOpList) {
-            dataService.addResource(tmpRes);
         }
     }
 
@@ -269,13 +241,7 @@ public class DataServiceFactory {
      * i.e. does not have a result.
      */
     private static boolean isBatchCompatible(CallableRequest request) {
-        if (request.getCallQueryGroup().getDefaultCallQuery().getWithParams().size() == 0) {
-            return false;
-        }
-        if (request.getCallQueryGroup().getDefaultCallQuery().getQuery().hasResult()) {
-            return false;
-        }
-        return true;
+        return !request.getCallQueryGroup().getDefaultCallQuery().getQuery().hasResult();
     }
 
 }

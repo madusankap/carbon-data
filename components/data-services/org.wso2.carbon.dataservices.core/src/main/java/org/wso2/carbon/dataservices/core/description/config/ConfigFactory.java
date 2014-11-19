@@ -51,9 +51,7 @@ public class ConfigFactory {
 			return getRDBMSConfig(dataService, configId, properties);
 		} else if (DataSourceTypes.JNDI.equals(configType)) {
 			return getJNDIConfig(dataService, configId, properties);
-		}  else if (DataSourceTypes.MONGODB.equals(configType)) {
-            return getMongoConfig(dataService, configId, properties);
-        } else if (DataSourceTypes.EXCEL.equals(configType)) {
+		} else if (DataSourceTypes.EXCEL.equals(configType)) {
 			return getExcelConfig(dataService, configId, properties);
 		} else if (DataSourceTypes.RDF.equals(configType)) {
 			return getRDFConfig(dataService, configId, properties);
@@ -71,8 +69,6 @@ public class ConfigFactory {
             return getCustomTabularConfig(dataService, configId, properties);
         } else if (DataSourceTypes.CUSTOM_QUERY.equals(configType)) {
             return getCustomQueryConfig(dataService, configId, properties);
-        } else if (DataSourceTypes.CASSANDRA.equals(configType)) {
-            return getCassandraConfig(dataService, configId, properties);
         }
 		
 		return null;
@@ -89,12 +85,6 @@ public class ConfigFactory {
 		JNDIConfig config = new JNDIConfig(dataService, configId, properties);
 		return config;
 	}
-
-    private static MongoConfig getMongoConfig(DataService dataService, String configId,
-                                            Map<String, String> properties) throws DataServiceFault {
-        MongoConfig config = new MongoConfig(dataService, configId, properties);
-        return config;
-    }
 	
 	private static ExcelConfig getExcelConfig(DataService dataService, String configId, 
 			Map<String, String> properties) throws DataServiceFault {
@@ -119,12 +109,6 @@ public class ConfigFactory {
 		CSVConfig config = new CSVConfig(dataService, configId, properties);
 		return config;
 	}
-	
-	private static CassandraConfig getCassandraConfig(DataService dataService, String configId, 
-            Map<String, String> properties) throws DataServiceFault {
-	    CassandraConfig config = new CassandraConfig(dataService, configId, properties);
-        return config;
-    }
 
     private static WebConfig getWebConfig(DataService dataService, String configId,
              Map<String, String> properties) throws DataServiceFault {
@@ -199,9 +183,7 @@ public class ConfigFactory {
 		    return DataSourceTypes.CSV;
 		} else if (properties.get(DBConstants.JNDI.RESOURCE_NAME) != null) {
 		    return DataSourceTypes.JNDI;
-		} else if (properties.get(MongoDB.SERVERS) != null) {
-            return DataSourceTypes.MONGODB;
-        } else if (properties.get(GSpread.DATASOURCE) != null) {
+		} else if (properties.get(GSpread.DATASOURCE) != null) {
 		    return DataSourceTypes.GDATA_SPREADSHEET;
 		} else if (properties.get(DBConstants.CarbonDatasource.NAME) != null) {
 		    return DataSourceTypes.CARBON;
@@ -211,9 +193,7 @@ public class ConfigFactory {
             return DataSourceTypes.CUSTOM_TABULAR;
         } else if (properties.get(DBConstants.CustomDataSource.DATA_SOURCE_QUERY_CLASS) != null) {
             return DataSourceTypes.CUSTOM_QUERY;
-        } else if (properties.get(DBConstants.Cassandra.CASSANDRA_SERVERS) != null) {
-            return DataSourceTypes.CASSANDRA;
-        } 
+        }
 		throw new DataServiceFault("Cannot create config with properties: " + properties);
 	}
 	

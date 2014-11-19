@@ -30,10 +30,11 @@ public class DSAxis2ConfigurationContextObserver extends AbstractAxis2Configurat
 
     public void createdConfigurationContext(ConfigurationContext configurationContext) {
 
-		int tenantId = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+		int tenantId = PrivilegedCarbonContext.getCurrentContext(
+				configurationContext).getTenantId();
         try {
         	PrivilegedCarbonContext.startTenantFlow();
-        	PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
+        	PrivilegedCarbonContext.getCurrentContext().setTenantId(tenantId);
 
 //            AxisConfiguration axisConfigOfCurrentTenant = configurationContext.getAxisConfiguration();
 //            DeploymentEngine axisDeploymentEngine =

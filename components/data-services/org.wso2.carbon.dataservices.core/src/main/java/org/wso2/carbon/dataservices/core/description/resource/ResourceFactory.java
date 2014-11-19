@@ -67,7 +67,7 @@ public class ResourceFactory {
 		}
 		boolean disableStreamingEffective = disableStreamingRequest | dataService.isDisableStreaming();
 		
-		Resource resource = new Resource(dataService, resourceId, description, callQueryGroup, false, null, 
+		Resource resource = new Resource(dataService, resourceId, description, callQueryGroup, 
 				disableStreamingRequest, disableStreamingEffective);
 		
 	    String returnReqStatusStr = resEl.getAttributeValue(

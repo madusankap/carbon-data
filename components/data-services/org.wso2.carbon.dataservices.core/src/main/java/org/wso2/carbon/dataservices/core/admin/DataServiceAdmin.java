@@ -22,7 +22,6 @@ import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.CellFeed;
 import com.google.gdata.util.AuthenticationException;
 import com.google.gdata.util.ServiceException;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
@@ -41,7 +40,6 @@ import org.wso2.carbon.dataservices.core.DBUtils;
 import org.wso2.carbon.dataservices.core.DataServiceFault;
 import org.wso2.carbon.dataservices.core.description.config.SQLCarbonDataSourceConfig;
 import org.wso2.carbon.dataservices.core.description.config.GSpreadConfig;
-import org.wso2.carbon.dataservices.core.description.query.QueryFactory;
 import org.wso2.carbon.dataservices.core.engine.DataService;
 import org.wso2.carbon.dataservices.core.engine.DataServiceSerializer;
 import org.wso2.carbon.dataservices.core.script.DSGenerator;
@@ -198,11 +196,11 @@ public class DataServiceAdmin extends AbstractAdmin {
 	public String testJDBCConnection(String driverClass, String jdbcURL, String username,
 			String password, String passwordAlias) {
 		int tenantId =
-				PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId();
+				PrivilegedCarbonContext.getCurrentContext(this.getConfigContext()).getTenantId();
 		Connection connection = null;
 		try {
 			PrivilegedCarbonContext.startTenantFlow();
-			PrivilegedCarbonContext.getThreadLocalCarbonContext().setTenantId(tenantId);
+			PrivilegedCarbonContext.getCurrentContext().setTenantId(tenantId);
 
 			String resolvePwd = "";
 			if (driverClass == null || driverClass.length() == 0) {
@@ -427,7 +425,7 @@ public class DataServiceAdmin extends AbstractAdmin {
 	 * Return the generated services name list
 	 */
 	public String[] getDSServiceList(String dataSourceId, String dbName, String[] schemas,
-			String[] tableNames, boolean singleService,String serviceNamespace) throws Exception {
+			String[] tableNames, boolean singleService,String serviceNamespace) throws AxisFault  {
 		DSGenerator generator = new DSGenerator(dataSourceId, dbName, schemas, tableNames, false,serviceNamespace,"");
 		List<String> serviceNames = new ArrayList<String>();
 		List<DataService> dsList = generator.getGeneratedServiceList();
@@ -443,7 +441,7 @@ public class DataServiceAdmin extends AbstractAdmin {
 	 * Return the generated service name
 	 */
 	public String getDSService(String dataSourceId, String dbName, String[] schemas,
-			String[] tableNames, boolean singleService,String serviceName,String serviceNamespace) throws Exception {
+			String[] tableNames, boolean singleService,String serviceName,String serviceNamespace) throws AxisFault {
 		DSGenerator generator = new DSGenerator(dataSourceId, dbName, schemas, tableNames, true,serviceNamespace,serviceName);
 		DataService dataservice = generator.getGeneratedService();
 		OMElement element = DataServiceSerializer.serializeDataService(dataservice);
@@ -484,15 +482,6 @@ public class DataServiceAdmin extends AbstractAdmin {
         pageable.setNumberOfPages(numberOfPages);
         pageable.set(returnList);
         return returnList;
-    }
-    
-    public String validateJSONMapping(String jsonMapping) {
-        try {
-            QueryFactory.getJSONResultFromText(jsonMapping);
-            return "";
-        } catch (DataServiceFault e) {
-            return e.getDsFaultMessage();
-        }
     }
     
 }

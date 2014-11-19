@@ -67,7 +67,7 @@ public abstract class AbstractCustomDataSourceReader implements DataSourceReader
 	}
 	
 	private void populateStandardProps(Map<String, String> dsProps) {
-		String dsInfo = PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId() + "###"
+		String dsInfo = PrivilegedCarbonContext.getCurrentContext().getTenantId() + "###"
 				 + DataSourceUtils.getCurrentDataSourceId();
 		dsProps.put(DBConstants.CustomDataSource.DATASOURCE_ID, UUID.nameUUIDFromBytes(
 				dsInfo.getBytes(Charset.forName(DBConstants.DEFAULT_CHAR_SET_TYPE))).toString());

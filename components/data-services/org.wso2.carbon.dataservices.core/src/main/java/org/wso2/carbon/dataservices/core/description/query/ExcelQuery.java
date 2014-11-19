@@ -30,7 +30,6 @@ import org.wso2.carbon.dataservices.core.description.event.EventTrigger;
 import org.wso2.carbon.dataservices.core.engine.*;
 
 import javax.xml.stream.XMLStreamWriter;
-
 import java.util.List;
 import java.util.Map;
 
@@ -47,15 +46,13 @@ public class ExcelQuery extends Query {
 
     private int startingRow;
 
-    private int headerRow;
-
     private int maxRowCount;
 
     private Map<Integer, String> columnMappings;
 
     public ExcelQuery(DataService dataService, String queryId,
                       List<QueryParam> queryParams, String configId, String workbookName,
-                      boolean hasHeader, int startingRow, int headerRow, int maxRowCount, Result result,
+                      boolean hasHeader, int startingRow, int maxRowCount, Result result,
                       EventTrigger inputEventTrigger, EventTrigger outputEventTrigger,
                       Map<String, String> advancedProperties, String inputNamespace)
             throws DataServiceFault {
@@ -70,7 +67,6 @@ public class ExcelQuery extends Query {
         this.workbookName = workbookName;
         this.hasHeader = hasHeader;
         this.startingRow = startingRow;
-        this.headerRow = headerRow;
         this.maxRowCount = maxRowCount;
         
         try {
@@ -90,7 +86,8 @@ public class ExcelQuery extends Query {
         }
         Workbook wb = this.getConfig().createWorkbook();
         Sheet sheet = wb.getSheet(this.getWorkbookName());
-        return this.extractRowData(sheet.getRow(this.getHeaderRow() - 1));
+        String[] header = this.extractRowData(sheet.getRow(0));
+        return header;
     }
 
     private String[] extractRowData(Row row) {
@@ -150,10 +147,6 @@ public class ExcelQuery extends Query {
         return startingRow;
     }
 
-    public int getHeaderRow() {
-        return headerRow;
-    }
-
     public String getWorkbookName() {
         return workbookName;
     }
@@ -161,15 +154,8 @@ public class ExcelQuery extends Query {
     public void runQuery(XMLStreamWriter xmlWriter, InternalParamCollection params, int queryLevel)
             throws DataServiceFault {
         try {
-            Sheet sheet = (Sheet) Query.getAndRemoveQueryPreprocessObject("sheet");
-            if (sheet == null) {
-                Workbook wb = this.getConfig().createWorkbook();
-                sheet = wb.getSheet(this.getWorkbookName());
-                if (Query.isQueryPreprocessInitial()) {
-                    Query.setQueryPreprocessedObject("sheet", sheet);
-                    return;
-                }
-            }
+            Workbook wb = this.getConfig().createWorkbook();
+            Sheet sheet = wb.getSheet(this.getWorkbookName());
             int maxCount = this.getMaxRowCount();
             int i = this.getStartingRow() - 1;
             int count = 0;
