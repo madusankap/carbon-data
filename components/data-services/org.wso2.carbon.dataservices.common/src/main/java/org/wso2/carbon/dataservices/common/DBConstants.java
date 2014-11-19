@@ -779,6 +779,7 @@ public final class DBConstants {
         public static final String ENABLE_BATCH_REQUESTS = "enableBatchRequests";
         public static final String ENABLE_BOXCARRING = "enableBoxcarring";
         public static final String DISABLE_STREAMING = "disableStreaming";
+        public static final String MANAGED_API = "managedApi";
         public static final String RETURN_REQUEST_STATUS = "returnRequestStatus";
         public static final String SERVICE_STATUS = "serviceStatus";
         public static final String BASE_URI = "baseURI";
