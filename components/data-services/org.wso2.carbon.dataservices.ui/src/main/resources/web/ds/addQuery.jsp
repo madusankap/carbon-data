@@ -30,7 +30,7 @@
 <jsp:include page="../resources/resources-i18n-ajaxprocessor.jsp"/>
 <jsp:include page="../dialog/display_messages.jsp"/>
 <fmt:bundle basename="org.wso2.carbon.dataservices.ui.i18n.Resources">
-<%--script type="text/javascript" src="../ajax/js/prototype.js"></script--%>
+<script type="text/javascript" src="../ajax/js/prototype.js"></script>
 <script type="text/javascript" src="../resources/js/resource_util.js"></script>
 <%--<jsp:useBean id="dataService" class="org.wso2.carbon.dataservices.ui.beans.Data" scope="session"></jsp:useBean>--%>
 <link rel="stylesheet" type="text/css" href="../resources/css/registry.css"/>
@@ -43,34 +43,20 @@
 
 <jsp:useBean id="dataService" class="org.wso2.carbon.dataservices.ui.beans.Data"
              scope="session"></jsp:useBean>
-             
-<script type="text/javascript">
-
-window.onload=function() {
-	var field = $('textarea#jsonMapping');
-	if (field == null) { return; }
-	var value = JSON.parse(field.val());
-	if (value == null) { return; }
-	value = JSON.stringify(value, null, 4);
-	$('textarea#jsonMapping').val(value);
-};
-   
-</script>
-             
 <script type="text/javascript" src="js/ui-validations.js"></script>
 
 <script type="text/javascript">
     function setValueConf() {
         var elementId = 'xsltPath';
-        $(elementId).val($(elementId).val().replace("/_system/config", "conf:"));
+        $(elementId).value = $(elementId).value.replace("/_system/config", "conf:");
     }
     function setValueGov() {
         var elementId = 'xsltPath';
-        $(elementId).val($(elementId).val().replace("/_system/governance", "gov:"));
+        $(elementId).value = $(elementId).value.replace("/_system/governance", "gov:");
     }
     function setValue() {
         var elementId = 'rdfXsltPath';
-        $(elementId).val($(elementId).val().replace("/_system/config", "conf:"));
+        $(elementId).value = $(elementId).value.replace("/_system/config", "conf:");
     }
 </script>
 <%
@@ -86,8 +72,6 @@ window.onload=function() {
     String rdfResultNamespace = "";
     String sql = null;
     String expression = null;
-    String mongoExpression = null;
-    String cassandraExpression = null;
     String cql = null;
     String sparql = null;
     String workBookName = null;
@@ -101,7 +85,6 @@ window.onload=function() {
     String maxFieldSize = "";
     String maxRows = "";
     String scraperVaribale = null;
-    String textMapping = "";
     int workSheetNumber = 1;
     boolean returnGeneratedKeys = false;
     boolean isUseColumnNumbers = true;
@@ -109,7 +92,6 @@ window.onload=function() {
     boolean isEmptyReturnGeneratedKeys = true;
     boolean headersAvailable = false;
     int startingRow = 1;
-    int headerRow = 1;
     int maxRowCount = -1;
     boolean readOnly = false;
     String outputType = "";
@@ -147,8 +129,6 @@ window.onload=function() {
             useConfig = query.getConfigToUse();
             sql = query.getSql();
             expression = query.getExpression();
-            mongoExpression = query.getExpression();
-            cassandraExpression = query.getExpression();
             cql = query.getSql();
             sparql = query.getSparql();
             scraperVaribale = query.getScraperVariable();
@@ -168,11 +148,7 @@ window.onload=function() {
                 if (datasourceType != null && c.getPropertyValue(DBConstants.Excel.DATASOURCE) instanceof String &&
             			((String)c.getPropertyValue(DBConstants.Excel.DATASOURCE)).trim().length() != 0) {
                 	datasourceType = DataSourceTypes.EXCEL;
-                }
-                if (datasourceType != null && c.getPropertyValue(DBConstants.MongoDB.SERVERS) instanceof String &&
-                        ((String)c.getPropertyValue(DBConstants.MongoDB.SERVERS)).trim().length() != 0) {
-                    datasourceType = DataSourceTypes.MONGODB;
-                }
+                } 
             	if (datasourceType != null && c.getPropertyValue(DBConstants.GSpread.DATASOURCE) instanceof String &&
             			((String)c.getPropertyValue(DBConstants.GSpread.DATASOURCE)).trim().length() != 0) {
             		datasourceType = DataSourceTypes.GDATA_SPREADSHEET;
@@ -210,13 +186,11 @@ window.onload=function() {
                 rdfResultNamespace = result.getNamespace();
                 xsltPath = result.getXsltPath();
                 rdfXsltPath = result.getXsltPath();
-                textMapping = result.getTextMapping();
             }
             if (query.getExcel() != null) {
                 ExcelQuery excel = query.getExcel();
                 workBookName = excel.getWorkBookName();
                 startingRow = excel.getStartingRow();
-                headerRow = excel.getHeaderRow();
                 maxRowCount = excel.getMaxRowCount();
                 headersAvailable = excel.hasHeaders();
             } else if (query.getGSpread() != null) {
@@ -253,9 +227,6 @@ window.onload=function() {
         outputType = (outputType == null) ? "xml" : outputType;
         sql = (sql == null) ? "" : sql;
         cql = (cql == null) ? "" : cql;
-        expression = (expression == null) ? "" : expression;
-        mongoExpression = (mongoExpression == null) ? "" : mongoExpression;
-        cassandraExpression = (cassandraExpression == null) ? "" : cassandraExpression;
         keyColumns = (keyColumns == null) ? "" : keyColumns;
         sparql = (sparql == null) ? "" : sparql;
         scraperVaribale = (scraperVaribale == null) ? "" : scraperVaribale;
@@ -267,7 +238,6 @@ window.onload=function() {
         xsltPath = (xsltPath == null) ? "" : xsltPath;
         rdfXsltPath = (rdfXsltPath == null) ? "" : rdfXsltPath;
         workBookName = (workBookName == null) ? "" : workBookName;
-        textMapping = (textMapping == null || "".equals(textMapping)) ? "{\n \"entries\": {\n \"entry\": [\n {\n \"field1\": \"$column1\",\n \"field2\": \"$column2\"\n }\n ]\n }\n}" : textMapping;
     } catch (Exception e) {
 %>
 
@@ -336,11 +306,7 @@ window.onload=function() {
             	if (dsType != null && c.getPropertyValue(DBConstants.GSpread.DATASOURCE) instanceof String &&
             			((String)c.getPropertyValue(DBConstants.GSpread.DATASOURCE)).trim().length() != 0) {
                 	dsType = DataSourceTypes.GDATA_SPREADSHEET;
-                }
-                if (dsType != null && c.getPropertyValue(DBConstants.MongoDB.SERVERS) instanceof String &&
-                        ((String)c.getPropertyValue(DBConstants.MongoDB.SERVERS)).trim().length() != 0) {
-                    dsType = DataSourceTypes.MONGODB;
-                }
+                } 
 %>
 <input type="hidden" id="<%=c.getId()%>" value="<%=dsType%>"/>
 <input type="hidden" id="customDatasourceType<%=c.getId()%>" value="<%=customDatasourceType%>"/>
@@ -470,28 +436,14 @@ window.onload=function() {
     </td>
 </tr>
 
-<tr id="MongoDBQueryRow" style="<%=(datasourceType.equals("MongoDB"))?"":"display:none"%>">
-    <td colspan="2">
-        <table>
-            <tr>
-                <td align="left" class="leftCol-small"><fmt:message key="datasources.query.expression"/><font
-                        color='red'>*</font></td>
-                <td><textarea cols="50" rows="8" id="mongoExpression"
-                              name="mongoExpression"><%=(query != null) ? mongoExpression : ""%></textarea></td>
-            </tr>
-
-           </table>
-    </td>
-</tr>
-
 <tr id="CASSANDRARow" style="<%=(datasourceType.equals("Cassandra"))?"":"display:none"%>">
     <td colspan="2">
         <table>
             <tr>
-                <td align="left" class="leftCol-small"><fmt:message key="datasources.query.expression"/><font
+                <td align="left" class="leftCol-small">CQL<font
                         color='red'>*</font></td>
-                <td><textarea cols="50" rows="8" id="cassandraExpression"
-                              name="cassandraExpression"><%=(query != null) ? cassandraExpression : ""%></textarea></td>
+                <td><textarea cols="50" rows="8" id="cql"
+                              name="cql"><%=(query != null) ? cql : ""%></textarea></td>
             </tr>
             <tr>
                 <td>
@@ -694,7 +646,7 @@ window.onload=function() {
     </td>
 </tr>
 
-<% boolean inputMappingsSupported = (datasourceType.equals("RDBMS") || datasourceType.equals("JNDI") || datasourceType.equals("MongoDB") ||
+<% boolean inputMappingsSupported = (datasourceType.equals("RDBMS") || datasourceType.equals("JNDI") ||
                                      datasourceType.equals("CARBON_DATASOURCE") || datasourceType.equals("RDF") || datasourceType.equals("SPARQL") || datasourceType.equals("Cassandra") || datasourceType.equals("CUSTOM")); %>
 <tr style="<%=inputMappingsSupported ? "" : "display:none"%>">
    <td colspan="7" />                                                           
@@ -809,7 +761,6 @@ window.onload=function() {
                onclick="document.dataForm.action='queryProcessor.jsp?flag=sparqlInputMapping'" /></td>
 </tr>
 
-<% boolean trshow = false; %>
 <tr id="ExcelRow" style="<%=datasourceType.equals("EXCEL") ? "":"display:none"%>">
     <td>
         <table class="normal">
@@ -838,7 +789,7 @@ window.onload=function() {
             <tr>
                 <td><label><fmt:message key="dataservices.headers.available"/><font
                         color="red">*</font></label></td>
-                <td><select id="txtExcelHeaderColumns" name="txtExcelHeaderColumns" onchange="javascript:hasHeaderOnChange(this,document);return false;">
+                <td><select id="txtExcelHeaderColumns" name="txtExcelHeaderColumns">
                     <% if (headersAvailable) { %>
                     <option value="true" selected="selected">true</option>
                     <option value="false">false</option>
@@ -847,12 +798,6 @@ window.onload=function() {
                     <option value="false" selected="selected">false</option>
                     <% } %>
                 </select></td>
-            </tr>
-            <tr id="tr:excel.header.row" style='display:<%=(trshow?"table-row":"none")%>;vertical-align:top !important"' valign="top">
-                <td><label><fmt:message key="dataservices.header.row"/><font
-                        color="red">*</font></label></td>
-                <td><input value="<%=headerRow%>" id="txtExcelHeaderRow"
-                           name="txtExcelHeaderRow" size="30" type="text" /></td>
             </tr>
         </table>
     </td>
@@ -885,7 +830,7 @@ window.onload=function() {
             <tr>
                 <td><label><fmt:message key="dataservices.headers.available"/><font
                         color="red">*</font></label></td>
-                <td><select id="txtGSpreadHeaderColumns" name="txtGSpreadHeaderColumns" onchange="javascript:hasHeaderOnChange(this,document);return false;">
+                <td><select id="txtGSpreadHeaderColumns" name="txtGSpreadHeaderColumns">
                     <% if (headersAvailable) { %>
                     <option value="true" selected="selected">true</option>
                     <option value="false">false</option>
@@ -894,12 +839,6 @@ window.onload=function() {
                     <option value="false" selected="selected">false</option>
                     <% } %>
                 </select></td>
-            </tr>
-            <tr id="tr:gspred.header.row" style='display:<%=(trshow?"table-row":"none")%>;vertical-align:top !important"' valign="top">
-                <td><label><fmt:message key="dataservices.header.row"/><font
-                        color="red">*</font></label></td>
-                <td><input value="<%=headerRow%>" id="txtGSpreadHeaderRow"
-                           name="txtGSpreadHeaderRow" size="30" type="text" /></td>
             </tr>
         </table>
     </td>
@@ -975,11 +914,6 @@ window.onload=function() {
                     <option value="rdf" selected="selected">RDF</option>
                     <% } else { %>
                     <option value="rdf">RDF</option>
-                    <% } %>
-                    <% if (outputType.equals("json")) { %>
-                    <option value="json" selected="selected">JSON</option>
-                    <% } else { %>
-                    <option value="json">JSON</option>
                     <% } %>
                 </select></td>
             </tr>
@@ -1086,23 +1020,9 @@ window.onload=function() {
 </tr>
 
 
-<tr style="<%=outputType.equals("json")  ? "" : "display:none"%>" id="jsonResultTypeRow">
-    <td>
-        <table class="normal">
-            <tr>
-              <td>
-                  <textarea rows="25" cols="70" name="jsonMapping" id="jsonMapping"><%=textMapping%></textarea>
-              </td>
-            </tr>
-            
-        </table>
-    </td>
-</tr>
-
-
 <tr>
 <td>
-<table style="<%=!outputType.equals("json")  ? "" : "display:none"%>" class="styledLeft" cellspacing="0" id="existingOutputMappingsTable" width="100%">
+<table class="styledLeft" cellspacing="0" id="existingOutputMappingsTable" width="100%">
 <% if (query != null) {
     Result result = query.getResult();
     if (result != null) {
@@ -1461,7 +1381,7 @@ window.onload=function() {
 </table>
 </td>
 </tr>
-<tr style="<%=!outputType.equals("json")  ? "" : "display:none"%>" id="addOutputMappingsRow">
+<tr>
     <td>
         <a href="javascript:document.dataForm.submit();"
            onclick="return validateOutputMappingFields(<%=readOnly%>);"

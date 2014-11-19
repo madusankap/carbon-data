@@ -26,8 +26,8 @@ import org.wso2.carbon.dataservices.common.DBConstants.BoxcarringOps;
 import org.wso2.carbon.dataservices.core.DBUtils;
 import org.wso2.carbon.dataservices.core.DSSessionManager;
 import org.wso2.carbon.dataservices.core.DataServiceFault;
-import org.wso2.carbon.dataservices.core.TLConnectionStore;
 import org.wso2.carbon.dataservices.core.boxcarring.TLParamStore;
+import org.wso2.carbon.dataservices.core.engine.DataService;
 
 /**
  * Boxcarring data service request for service call grouping.
@@ -60,17 +60,16 @@ public class BoxcarringDataServiceRequest extends DataServiceRequest {
 			DSSessionManager.setBoxcarring(true);
 		} else if (BoxcarringOps.END_BOXCAR.equals(this.getRequestName())) {
 			/* execute all the stored requests */
-		    boolean error = true;
+			DataService dataService = this.getDSRequest().getDataService();
 			try {
-				DispatchStatus.setBoxcarringRequest();
-				if (!this.getDataService().isInDTX()) {
-				    this.getDataService().getDSSTxManager().begin();
-				}
+				dataService.beginTransaction();
 			    OMElement lastRequestResult = DSSessionManager.getCurrentRequestBox().execute();
-			    error = false;
+			    dataService.endTransaction();
 			    return lastRequestResult;
+			} catch (DataServiceFault e) {
+				dataService.rollbackTransaction();
+				throw new DataServiceFault(e, "Error in boxcarring end");
 			} finally {
-			    this.finalizeTx(error);
 				DSSessionManager.getCurrentRequestBox().clear();
 				DSSessionManager.setBoxcarring(false);
 				TLParamStore.clear();
@@ -78,7 +77,6 @@ public class BoxcarringDataServiceRequest extends DataServiceRequest {
 		} else if (BoxcarringOps.ABORT_BOXCAR.equals(this.getRequestName())) {
 			DSSessionManager.getCurrentRequestBox().clear();
 			DSSessionManager.setBoxcarring(false);
-			this.finalizeTx(true);
 		} else {
 			DSSessionManager.getCurrentRequestBox().addRequest(this.getDSRequest());
 			/* return an empty wrapper element result for each out/in-out boxcarring request,
@@ -87,31 +85,6 @@ public class BoxcarringDataServiceRequest extends DataServiceRequest {
 		}
 		return null;
 	}
-	
-	private void finalizeTx(boolean error) throws DataServiceFault {
-        if (error) {
-            if (this.getDataService().isInDTX()) {
-                TLConnectionStore.rollbackNonXAConns();
-                TLConnectionStore.closeAll();
-                if (this.getDataService().getDSSTxManager().isDTXInitiatedByUS()) {
-                    this.getDataService().getDSSTxManager().rollback();
-                }
-            } else {
-                TLConnectionStore.rollbackAll();
-                TLConnectionStore.closeAll();
-            }
-        } else {
-            if (this.getDataService().isInDTX()) {
-                TLConnectionStore.commitNonXAConns();
-            } else {
-                TLConnectionStore.commitAll();
-            }
-            TLConnectionStore.closeAll();
-            if (this.getDataService().getDSSTxManager().isDTXInitiatedByUS()) {
-                this.getDataService().getDSSTxManager().commit();
-            }
-        }
-    }
 	
 	private OMElement createBoxcarringRequestResultWrapper() {
 		String resultWrapper = this.getDataService().getResultWrapperForRequest(

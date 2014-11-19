@@ -50,21 +50,26 @@ public class Result {
 
     private boolean escapeNonPrintableChar;
     
-    public Result(String xsltPath, int resultType)
-            throws DataServiceFault {
-        this(null, null, null, xsltPath, resultType);
-    }
-    
 	public Result(String elementName, String rowName, String namespace, String xsltPath, int resultType)
             throws DataServiceFault {
 		this.elementName = elementName;
 		this.rowName = rowName;
-		this.resultType = resultType;
+		
+		if (resultType != DBConstants.ResultTypes.RDF) {
+			/* validate element name */
+			if (this.elementName != null && this.elementName.trim().length() > 0
+					&& !NCName.isValid(this.elementName)) {
+				throw new DataServiceFault("Invalid wrapper element name: '"
+							+ this.elementName + "', must be an NCName.");
+			}
+			/* validate row name */
+			if (this.rowName != null && this.rowName.length() != 0 &&
+					!NCName.isValid(this.rowName)) {
+				throw new DataServiceFault("Invalid row name: '" + this.rowName
+						+ "', must be an NCName.");
+			}
+		}
 		this.namespace = namespace;
-		
-		this.validateElementName(this.elementName);
-		this.validateRowName(this.rowName);
-		
 		if (xsltPath != null) {
             try {
                 xsltTransformer = new XSLTTransformer(xsltPath);
@@ -73,29 +78,7 @@ public class Result {
                         "Error in XSLT Transformation initialization in Result");
             }
         }
-        
-	}
-	
-	private void validateElementName(String elementName) throws DataServiceFault {
-	    if (this.resultType != DBConstants.ResultTypes.RDF) {
-            /* validate element name */
-            if (this.elementName != null && this.elementName.trim().length() > 0
-                    && !NCName.isValid(this.elementName)) {
-                throw new DataServiceFault("Invalid wrapper element name: '"
-                            + this.elementName + "', must be an NCName.");
-            }
-        }
-	}
-	
-	private void validateRowName(String rowName) throws DataServiceFault {
-	    if (this.resultType != DBConstants.ResultTypes.RDF) {
-            /* validate row name */
-            if (this.rowName != null && this.rowName.length() != 0 &&
-                    !NCName.isValid(this.rowName)) {
-                throw new DataServiceFault("Invalid row name: '" + this.rowName
-                        + "', must be an NCName.");
-            }
-        }
+        this.resultType = resultType;
 	}
 	
 	public boolean isUseColumnNumbers() {
@@ -134,10 +117,6 @@ public class Result {
 		return resultType;
 	}
 	
-	public void setResultType(int resultType) {
-	    this.resultType = resultType;
-	}
-	
 	public void applyUserRoles(Set<String> userRoles) {
 		this.getDefaultElementGroup().applyUserRoles(userRoles);
 	}
@@ -150,26 +129,12 @@ public class Result {
 		return namespace;
 	}
 	
-	public void setNamespace(String namespace) {
-	    this.namespace = namespace;
-	}
-	
 	public String getElementName() {
 		return elementName;
-	}
-	
-	public void setElementName(String elementName) throws DataServiceFault {
-	    this.validateElementName(elementName);
-	    this.elementName = elementName;
 	}
 
 	public String getRowName() {
 		return rowName;
-	}
-	
-	public void setRowName(String rowName) throws DataServiceFault {
-	    this.validateRowName(rowName);
-	    this.rowName = rowName;
 	}
 
     public boolean isEscapeNonPrintableChar() {

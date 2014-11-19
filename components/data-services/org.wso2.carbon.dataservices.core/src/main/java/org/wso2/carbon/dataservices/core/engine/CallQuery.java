@@ -61,11 +61,11 @@ public class CallQuery extends OutputElement {
 
 	public void init() throws DataServiceFault {
 		this.query = this.getDataService().getQuery(this.getQueryId());
-		if (this.query == null) {
-            throw new DataServiceFault(
-                    "Query with the query id: '" + this.getQueryId() + "' cannot be found");
-        }
         this.setNamespace(this.getQuery().getNamespace());
+		if (this.query == null) {
+			throw new DataServiceFault(
+					"Query with the query id: '" + this.getQueryId() + "' cannot be found");
+		}
 	}
 	
 	public Map<String, WithParam> getWithParams() {
@@ -98,7 +98,7 @@ public class CallQuery extends OutputElement {
 				}
 			}
 		} else if ("TENANT_ID".equals(propName)) {
-			return String.valueOf(PrivilegedCarbonContext.getThreadLocalCarbonContext().getTenantId());
+			return String.valueOf(PrivilegedCarbonContext.getCurrentContext().getTenantId());
 		} else if ("USER_ROLES".equals(propName)) {
 			MessageContext context = MessageContext.getCurrentMessageContext();
 			if (context != null) {

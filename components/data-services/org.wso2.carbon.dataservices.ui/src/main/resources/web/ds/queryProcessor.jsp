@@ -38,8 +38,6 @@
     String datasource = request.getParameter("datasource");
     String sql = request.getParameter("sql");
     String expression = request.getParameter("expression");
-    String mongoExpression = request.getParameter("mongoExpression");
-    String cassandraExpression = request.getParameter("cassandraExpression");
     String cql = request.getParameter("cql");
     String sparql = request.getParameter("sparql");
     String flag = request.getParameter("flag");
@@ -51,13 +49,11 @@
     String element = request.getParameter("txtDataServiceWrapElement");
     String workBookName = request.getParameter("txtExcelWorkbookName");
     String startingRow = request.getParameter("txtExcelStartingRow");
-    String headerRow = request.getParameter("txtExcelHeaderRow");
     String maxRowCount = request.getParameter("txtExcelMaxRowCount");
     String headerColumns = request.getParameter("txtExcelHeaderColumns");
     String gSpreadWorkSheetNumber = request.getParameter("txtGSpreadWorksheetNumber");
     String gSpreadStartingRow = request.getParameter("txtGSpreadStartingRow");
     String gSpreadMaxRowCount = request.getParameter("txtGSpreadMaxRowCount");
-    String gSpreadHeaderRow = request.getParameter("txtGSpreadHeaderRow");
     String gHasHeaders = request.getParameter("txtGSpreadHeaderColumns");
     String inputEvent = request.getParameter("inputEventTrigger");
     String outputEvent = request.getParameter("outputEventTrigger");
@@ -80,7 +76,6 @@
     String setReturnGeneratedKeys = request.getParameter("setReturnGeneratedKeys");
     String useColumnNumbers = request.getParameter("useColumnNumbers");
     String escapeNonPrintableChar = request.getParameter("escapeNonPrintableChar");
-    String textMapping = request.getParameter("jsonMapping");
 
     edit = (edit == null) ? "" : edit;
     outputType = (outputType == null) ? "xml" : outputType;
@@ -186,7 +181,6 @@
 	                        excel.setHasHeaders(headerColumns);
 	                        excel.setMaxRowCount(maxRowCount);
 	                        excel.setStartingRow(startingRow);
-	                        excel.setHeaderRow(headerRow);
 	                        query.setExcel(excel);
                     	} else if (con.getPropertyValue(DBConstants.GSpread.DATASOURCE) instanceof String &&
                     			((String)con.getPropertyValue(DBConstants.GSpread.DATASOURCE)).trim().length() != 0) {
@@ -195,7 +189,6 @@
                             gspread.setMaxRowCount(Integer.parseInt(gSpreadMaxRowCount));
                             gspread.setStartingRow(Integer.parseInt(gSpreadStartingRow));
                             gspread.setHasHeaders(gHasHeaders);
-                            gspread.setHeaderRow(Integer.parseInt(gSpreadHeaderRow));
                             query.setGSpread(gspread);
                     	} else {
 	                        if (query.getProperties().size() > 0) {
@@ -226,7 +219,6 @@
 	                        excel.setHasHeaders(headerColumns);
 	                        excel.setMaxRowCount(maxRowCount);
 	                        excel.setStartingRow(startingRow);
-	                        excel.setHeaderRow(headerRow);
 	                        query.setExcel(excel);
                         }
                     } else if (con.getDataSourceType().equals("GDATA_SPREADSHEET")) {
@@ -239,11 +231,8 @@
 	                        gspread.setMaxRowCount(Integer.parseInt(gSpreadMaxRowCount));
 	                        gspread.setStartingRow(Integer.parseInt(gSpreadStartingRow));
 	                        gspread.setHasHeaders(gHasHeaders);
-	                        gspread.setHeaderRow(Integer.parseInt(gSpreadHeaderRow));
 	                        query.setGSpread(gspread);
                         }
-                    } else if (con.getDataSourceType().equals("MongoDB")) {
-                         query.setExpression(mongoExpression);
                     } else if (con.getDataSourceType().equals("CARBON_DATASOURCE") || con.getDataSourceType().equals("JNDI")) {
                     	if (customDSType.equals(DBConstants.DataSourceTypes.CUSTOM_QUERY)) {
                     		query.setExpression(expression);
@@ -273,7 +262,7 @@
                     } else if (con.getDataSourceType().equals("WEB_CONFIG")) {
                         query.setScraperVariable(scraperVariable);
                     } else if (con.getDataSourceType().equals("Cassandra")) {
-                        query.setExpression(cassandraExpression);
+                        query.setSql(cql);
                     } else if (con.getDataSourceType().equals("CUSTOM")) {
                     	if (customDSType.equals(DBConstants.DataSourceTypes.CUSTOM_QUERY)) {
                     		query.setExpression(expression);
@@ -308,7 +297,7 @@
                     result.setUseColumnNumbers(useColumnNumbers);
                     result.setEscapeNonPrintableChar(escapeNonPrintableChar);
                     result.setRdfBaseURI(rdfBaseURI);
-                    result.setTextMapping(textMapping);
+
                     
                 } else {
                     if ((outputType.equals("xml")) && (!nameSpace.equals("") || !element.equals("") || !rowName.equals(""))) {
@@ -334,17 +323,6 @@
                              result.setXsltPath(rdfXsltPath);
                          }
                          query.setResult(result);
-                    } else if (outputType.equals("json")) {
-                        result = new Result();
-                        result.setNamespace(nameSpace);
-                        result.setOutputType(outputType);
-                        result.setUseColumnNumbers(useColumnNumbers);
-                        result.setEscapeNonPrintableChar(escapeNonPrintableChar);
-                        if (xsltPath != null && xsltPath.trim().length() > 0) {
-                            result.setXsltPath(xsltPath);
-                        }
-                        result.setTextMapping(textMapping);
-                        query.setResult(result);
                     }
                 }
                 if (flag.equals("save")) {
@@ -393,7 +371,6 @@
                         excel.setHasHeaders(headerColumns);
                         excel.setMaxRowCount(maxRowCount);
                         excel.setStartingRow(startingRow);
-                        excel.setHeaderRow(headerRow);
                         query.setExcel(excel);
                 	} else if (con.getPropertyValue(DBConstants.GSpread.DATASOURCE) instanceof String &&
                 			((String)con.getPropertyValue(DBConstants.GSpread.DATASOURCE)).trim().length() != 0) {
@@ -402,7 +379,6 @@
                         gspread.setMaxRowCount(Integer.parseInt(gSpreadMaxRowCount));
                         gspread.setStartingRow(Integer.parseInt(gSpreadStartingRow));
                         gspread.setHasHeaders(gHasHeaders);
-                        gspread.setHeaderRow(Integer.parseInt(gSpreadHeaderRow));
                         query.setGSpread(gspread);
                 	} else {
 	                    query.addProperty(DBConstants.RDBMS.QUERY_TIMEOUT, timeout);
@@ -424,7 +400,6 @@
 	                    excel.setHasHeaders(headerColumns);
 	                    excel.setMaxRowCount(maxRowCount);
 	                    excel.setStartingRow(startingRow);
-	                    excel.setHeaderRow(headerRow);
 	                    query.setExcel(excel);
 	                    excel.buildXML();
                 	}
@@ -438,11 +413,8 @@
 	                    gspread.setMaxRowCount(Integer.parseInt(gSpreadMaxRowCount));
 	                    gspread.setStartingRow(Integer.parseInt(gSpreadStartingRow));
 	                    gspread.setHasHeaders(gHasHeaders);
-	                    gspread.setHeaderRow(Integer.parseInt(gSpreadHeaderRow));
 	                    query.setGSpread(gspread);
                     }
-                }else if (con.getDataSourceType().equals("MongoDB")) {
-                    query.setExpression(mongoExpression);
                 } else if (con.getDataSourceType().equals("CARBON_DATASOURCE") || con.getDataSourceType().equals("JNDI")) {
                 	if (customDSType.equals(DBConstants.DataSourceTypes.CUSTOM_QUERY)) {
                 		query.setExpression(expression);
@@ -494,17 +466,6 @@
                      result.setXsltPath(rdfXsltPath);
                  }
                  query.setResult(result);
-            } else if (outputType.equals("json")) {
-                result = new Result();
-                result.setNamespace(nameSpace);
-                result.setOutputType(outputType);
-                result.setUseColumnNumbers(useColumnNumbers);
-                result.setEscapeNonPrintableChar(escapeNonPrintableChar);
-                if (xsltPath != null && xsltPath.trim().length() > 0) {
-                    result.setXsltPath(xsltPath);
-                }
-                result.setTextMapping(textMapping);
-                query.setResult(result);
             }
             dataService.addQuery(query);
             if (flag.equals("save")) {

@@ -75,8 +75,8 @@
     String resourceMethod = request.getParameter("resourceMethod");
     String flag = request.getParameter("flag");
     String existingResource = null;    
-    if (resourcePath != null && resourcePath.trim().length() > 0 && resourceMethod != null && resourceMethod.trim().length() > 0) {
-        resource = dataService.getResource(resourcePath, resourceMethod);
+    if (resourcePath != null && resourcePath.trim().length() > 0) {
+        resource = dataService.getResource(resourcePath);
         if (resource != null) {
             description = resource.getDescription();
             existingResource = "true";
@@ -143,8 +143,6 @@
                                 <input type="hidden" value="<%=serviceName%>" name="serviceName">
                                 <input type="hidden" value="<%=resourcePath%>" id="oldResourcePath"
                                        name="oldResourcePath"/>
-                                <input type="hidden" value="<%=resourceMethod%>" id="oldResourceMethod"
-                                                                       name="oldResourceMethod"/>
                                 <tr>
                                     <td><fmt:message key="datasources.resource.path"/><font
                                             color="red">*</font></td>

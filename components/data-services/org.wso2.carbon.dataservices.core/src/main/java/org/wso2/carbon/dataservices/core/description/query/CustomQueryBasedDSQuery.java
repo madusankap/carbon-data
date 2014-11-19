@@ -86,16 +86,9 @@ public class CustomQueryBasedDSQuery extends Query {
 			InternalParamCollection params, int queryLevel)
 			throws DataServiceFault {
 		try {
-		    QueryResult result = (QueryResult) Query.getAndRemoveQueryPreprocessObject("result");
-		    if (result == null) {
-		        CustomQueryBasedDS dataSource = this.getConfig().getDataSource();
-    		    result = dataSource.executeQuery(this.getExpression(), 
-    		    		new ArrayList<InternalParam>(params.getParams()));
-    		    if (Query.isQueryPreprocessInitial()) {
-    		        Query.setQueryPreprocessedObject("result", result);
-    		        return;
-    		    }
-		    }
+		    CustomQueryBasedDS dataSource = this.getConfig().getDataSource();
+		    QueryResult result = dataSource.executeQuery(this.getExpression(), 
+		    		new ArrayList<InternalParam>(params.getParams()));
 		    DataEntry dataEntry;
 		    DataRow currentRow;
 		    List<DataColumn> columns = result.getDataColumns();

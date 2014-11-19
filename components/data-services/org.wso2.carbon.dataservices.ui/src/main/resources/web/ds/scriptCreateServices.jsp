@@ -53,7 +53,6 @@
 		  for (int i=0;i<tableList.length;i++) {
   	  }
 	 }
-	 String error = "";
     try{
 	String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
 	ConfigurationContext configContext =(ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
@@ -72,9 +71,10 @@
 
     
 
-   }catch(Exception e){
-       servicesList = null;
-	   error = e.getMessage();
+   }catch(AxisFault e){
+	   CarbonError carbonError = new CarbonError();
+	   carbonError.addError("Error occurred while saving data service configuration.");
+	   request.setAttribute(CarbonError.ID, carbonError);
     }
 %>
 
@@ -108,14 +108,6 @@
                         </table>
                     </td>
                     </tr>
-                    <% } else {%>
-                    <h3>Service Deployment Unsuccessful due to </h3>
-                    <tr>
-                                                            <td><%= error%></td>
-                                                        </tr>
-                    </td>
-
-                    <% }%>
                     <tr>
                         <td class="buttonRow">
                            <input
@@ -123,7 +115,7 @@
                         onclick="location.href = '../service-mgt/index.jsp'" /></td>
                         </td>
                     </tr>
-
+                    <% } %>
                 </table>
             </form>
         </div>

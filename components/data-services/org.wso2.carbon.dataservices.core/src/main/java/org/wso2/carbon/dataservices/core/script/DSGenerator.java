@@ -24,8 +24,8 @@ import org.wso2.carbon.dataservices.common.DBConstants;
 import org.wso2.carbon.dataservices.common.DBConstants.ResultTypes;
 import org.wso2.carbon.dataservices.core.DBUtils;
 import org.wso2.carbon.dataservices.core.DataServiceFault;
-import org.wso2.carbon.dataservices.core.description.config.Config;
 import org.wso2.carbon.dataservices.core.description.config.SQLCarbonDataSourceConfig;
+import org.wso2.carbon.dataservices.core.description.config.Config;
 import org.wso2.carbon.dataservices.core.description.operation.Operation;
 import org.wso2.carbon.dataservices.core.description.query.Query;
 import org.wso2.carbon.dataservices.core.description.query.QueryFactory;
@@ -92,7 +92,7 @@ public class DSGenerator {
 	 * 
 	 */
 	public DSGenerator(String dataSourceId, String dbName, String[] schemas,
-			String[] tableNames, boolean singleService,String nameSpace,String serviceName) throws Exception {
+			String[] tableNames, boolean singleService,String nameSpace,String serviceName) {
 		this.DSErrorList = new ArrayList<String>();
 		try {
 			Connection connection;
@@ -115,7 +115,6 @@ public class DSGenerator {
 			}
 		} catch (Exception e) {
 			log.error("Meta Object initialization failed due to ", e);
-                        throw new Exception("Meta Object initialization failed due to : " + e.getMessage());
 		}
 	}
 
@@ -148,7 +147,7 @@ public class DSGenerator {
 		//String serviceName = dbName + DBConstants.DataServiceGenerator.SERVICE_NAME_SUFFIX;
 		DataService dataService = new DataService(serviceName,
 				DBConstants.DataServiceGenerator.SINGLE_SERVICE_DESCRIPTION,null, null,
-                DBConstants.DataServiceGenerator.ACTIVE, false, false, null);
+                DBConstants.DataServiceGenerator.ACTIVE, false, false, false, null);
 		this.setConfig(dataService, datasourceId);
 		if (DBUtils.isEmptyString(serviceNamespace)) {
 			dataService.setServiceNamespace(DBConstants.WSO2_DS_NAMESPACE);
@@ -187,13 +186,8 @@ public class DSGenerator {
 			DatabaseMetaData metaData, DataService dataService, String schema)
 			throws SQLException {
 		for (String tableName : tableNames) {
-                        String tablePrimaryKey = "";
-                        try {
-                                tablePrimaryKey = this.getPrimaryKey(metaData, dbName,
-                                        schema, tableName);
-                        } catch (SQLException e) {
-                                throw new SQLException("Cannot create the service : " + e.getMessage());
-                        }
+			String tablePrimaryKey = this.getPrimaryKey(metaData, dbName,
+					schema, tableName);
 			this.addOperations(dataService, schema, metaData, dbName,
 					tableName, tablePrimaryKey);
 		}
@@ -203,25 +197,20 @@ public class DSGenerator {
 			DatabaseMetaData metaData, List<DataService> dataServiceList,
 			String schema, String datasourceId,String serviceNamespace) throws SQLException,
 			DataServiceFault {
-
+		
 		for (String tableName : tableNames) {
 			String serviceName = tableName + DBConstants.DataServiceGenerator.SERVICE_NAME_SUFFIX;
 			DataService dataService = new DataService(serviceName,
 					DBConstants.DataServiceGenerator.MUTLIPLE_SERVICE_DESCRIPTION, null, null,
-                    DBConstants.DataServiceGenerator.ACTIVE, false, false, null);
+                    DBConstants.DataServiceGenerator.ACTIVE, false, false, false, null);
 			if (DBUtils.isEmptyString(serviceNamespace)) {
 				dataService.setServiceNamespace(DBConstants.WSO2_DS_NAMESPACE);
 			} else {
 				dataService.setServiceNamespace(serviceNamespace);
 			}
 			this.setConfig(dataService, datasourceId);
-                        String tablePrimaryKey = "";
-                        try {
-                                tablePrimaryKey = this.getPrimaryKey(metaData, dbName,
+			String tablePrimaryKey = this.getPrimaryKey(metaData, dbName,
 					schema, tableName);
-                        } catch (SQLException e) {
-                            throw new SQLException("Cannot create the service : " + e.getMessage());
-                        }
 			this.addOperations(dataService, schema, metaData, dbName,
 					tableName, tablePrimaryKey);
 			dataServiceList.add(dataService);
@@ -389,12 +378,7 @@ public class DSGenerator {
         if (resultSet.next()) {
              resultSet = meta.getPrimaryKeys(dbName, schema, tableName);
         }  else {
-             try {
-                 resultSet = meta.getPrimaryKeys(null, schema, tableName);
-             } catch (SQLException e) {
-                 log.error("Failed to extract primary key info ", e);
-                 throw new SQLException("Failed to extract primary key info");
-             }
+             resultSet = meta.getPrimaryKeys(null, schema, tableName);
         }
 		while (resultSet.next()) {
 			pKey = resultSet.getString(DBConstants.DataServiceGenerator.COLUMN_NAME);

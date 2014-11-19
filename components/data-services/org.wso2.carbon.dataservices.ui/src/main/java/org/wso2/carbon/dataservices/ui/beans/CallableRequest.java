@@ -67,6 +67,7 @@ public abstract class CallableRequest extends DataServiceConfigurationElement {
 		if (this.isDisableStreaming()) {
 			requestEl.addAttribute(DBSFields.DISABLE_STREAMING, String.valueOf(true), null);
 	    }
+
 		if (this.getDescription() != null && this.getDescription().trim().length() > 0) {
 			OMElement descEl = fac.createOMElement(DBSFields.DESCRIPTION, null);
 			descEl.setText(this.getDescription());

@@ -68,25 +68,19 @@ public class RdfFileQuery extends SparqlQueryBase {
     public void processQuery(XMLStreamWriter xmlWriter,
 			InternalParamCollection params, int queryLevel) throws DataServiceFault {
 		try {
-		    ResultSet results = (ResultSet) Query.getAndRemoveQueryPreprocessObject("results");
-		    if (results == null) {
-    			QuerySolutionMap queryMap = new QuerySolutionMap();
-    			Model model = this.getModelForValidation();
-    			/* process the query params */
-    			for (InternalParam param : params.getParams()) {
-    				/* set parameters to the query map */
-    				queryMap.add(param.getName(), convertTypeLiteral(model, param));
-    			}
-    			QueryExecution qe = this.getQueryExecution();
-                qe.setInitialBinding(queryMap) ;
-    
-    			/* execute query as a select query */
-    			results = qe.execSelect();
-    			if (Query.isQueryPreprocessInitial()) {
-    			    Query.setQueryPreprocessedObject("results", results);
-    			    return;
-    			}
-		    }
+			QuerySolutionMap queryMap = new QuerySolutionMap();
+			Model model = this.getModelForValidation();
+			/* process the query params */
+			for (InternalParam param : params.getParams()) {
+				/* set parameters to the query map */
+				queryMap.add(param.getName(), convertTypeLiteral(model, param));
+			}
+
+			QueryExecution qe = this.getQueryExecution();
+            qe.setInitialBinding(queryMap) ;
+
+			/* execute query as a select query */
+			ResultSet results = qe.execSelect();
 			DataEntry dataEntry;
 			while (results.hasNext()) {
 				dataEntry = this.getDataEntryFromRS(results);

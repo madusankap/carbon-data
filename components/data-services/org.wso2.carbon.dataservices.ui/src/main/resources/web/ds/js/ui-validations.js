@@ -131,20 +131,6 @@ function validateAddDataSourceForm(){
             CARBON.showWarningDialog('Sparql Endpoint URI is mandatory');
             return false;
         }
-    }else if(document.getElementById('datasourceType').value == 'MongoDB'){
-        if(document.getElementById('mongoDB_servers').value == ''){
-            CARBON.showWarningDialog('MongoDB Server is mandatory');
-            return false;
-        }
-        if(document.getElementById('mongoDB_database').value == ''){
-            CARBON.showWarningDialog('MongoDB Database Name is mandatory');
-            return false;
-        }
-    }else if(document.getElementById('datasourceType').value == 'Cassandra'){
-        if(document.getElementById('cassandraServers').value == ''){
-            CARBON.showWarningDialog('Cassandra Server is mandatory');
-            return false;
-        }
     }else if(document.getElementById('datasourceType').value == 'CSV'){
         if(document.getElementById('csv_datasource').value == ''){
             CARBON.showWarningDialog('CSV File Location is mandatory');
@@ -162,27 +148,18 @@ function validateAddDataSourceForm(){
             CARBON.showWarningDialog('Contains Column Header Row is mandatory');
             return false;
         }
-        if (document.getElementById('csv_hasheader').value == 'true') {
-            if (document.getElementById('csv_headerrow').value == '') {
-                CARBON.showWarningDialog('Enter value of the header row');
-                return false;
-            }
-            if (document.getElementById('csv_headerrow').value.match(/^[a-zA-Z]+$/)) {
-                CARBON.showWarningDialog('Enter numeric values to header row');
-                return false;
-            }
-            if (!document.getElementById('csv_headerrow').value.match(/^\s*[1-9]\d*\s*$/)) {
-                CARBON.showWarningDialog('Enter positive numeric value greater than zero to header row');
-                return false;
-            }
-            if ( document.getElementById('csv_headerrow').value > 2147483647) {
-                CARBON.showWarningDialog('Entered header row value exceeds the allowed maximum value');
-                return false;
-            }
-        }
     }else if(document.getElementById('datasourceType').value == 'JNDI'){
        if(document.getElementById('jndi_resource_name').value == ''){
             CARBON.showWarningDialog('Resource Name is mandatory');
+            return false;
+        }
+    } else if (document.getElementById('datasourceType').value == 'Cassandra') {
+        if(document.getElementById('org.wso2.ws.dataservice.driver').value ==  ''){
+            CARBON.showWarningDialog('Database Driver is mandatory');
+            return false;
+        }
+        if(document.getElementById('org.wso2.ws.dataservice.protocol').value ==  ''){
+            CARBON.showWarningDialog('JDBC URL is mandatory');
             return false;
         }
     } else if (document.getElementById('datasourceType').value == 'WEB_CONFIG') {
@@ -271,15 +248,8 @@ function validateAddQueryFormSave(obj) {
     }
 
     if (document.getElementById('CASSANDRARow').style.display == '') {
-        if (document.getElementById('cassandraExpression').value == '') {
-            CARBON.showWarningDialog('Expression is mandatory');
-            return false;
-        }
-    }
-
-    if (document.getElementById('MongoDBQueryRow').style.display == '') {
-        if (document.getElementById('mongoExpression').value == '') {
-            CARBON.showWarningDialog('Expression is mandatory');
+        if (document.getElementById('cql').value == '') {
+            CARBON.showWarningDialog('CQL is mandatory');
             return false;
         }
     }
@@ -291,10 +261,6 @@ function validateAddQueryFormSave(obj) {
         }
         if (document.getElementById('txtExcelStartingRow').value == '') {
             CARBON.showWarningDialog('Enter value to Start reading from');
-            return false;
-        }
-        if (document.getElementById('txtExcelHeaderRow').value == '') {
-            CARBON.showWarningDialog('Enter value of the header row');
             return false;
         }
         if (document.getElementById('txtExcelMaxRowCount').value == '') {
@@ -311,18 +277,6 @@ function validateAddQueryFormSave(obj) {
         }
         if ( document.getElementById('txtExcelStartingRow').value > 2147483647) {
         	CARBON.showWarningDialog('Entered Start reading from value exceeds the allowed maximum value');
-            return false;
-        }
-        if (document.getElementById('txtExcelHeaderRow').value.match(/^[a-zA-Z]+$/)) {
-            CARBON.showWarningDialog('Enter numeric values to header row');
-            return false;
-        }
-        if (!document.getElementById('txtExcelHeaderRow').value.match(/^\s*[1-9]\d*\s*$/)) {
-            CARBON.showWarningDialog('Enter positive numeric value greater than zero to header row');
-            return false;
-        }
-        if ( document.getElementById('txtExcelHeaderRow').value > 2147483647) {
-            CARBON.showWarningDialog('Entered header row value exceeds the allowed maximum value');
             return false;
         }
         if (document.getElementById('txtExcelMaxRowCount').value.match(/^[a-zA-Z]+$/)) {
@@ -372,37 +326,11 @@ function validateAddQueryFormSave(obj) {
             CARBON.showWarningDialog('Can not insert result elements without Output Mappings. Insert Output Mappings to proceed.');
             return  false;
         }
+        return   true;
     }
     
-    var status = true;
-    
-    if (document.getElementById('outputTypeId').value == 'json') {
-    	var data = document.getElementById('jsonMapping').value;
-    	$.ajax({
-	        url: '../ds/json_mapping_validate_ajaxprocessor.jsp',
-	        type: 'POST',
-	        async: false,
-	        cache: false,
-	        data: data,
-	        processData: false,
-	        timeout: 5000,
-	        error: function() {
-	            status = true;
-	        },
-	        contentType: 'application/json',
-	        success: function(msg) {
-	        	msg = msg.toString().trim();
-	            if (msg.length == 0){
-	                status = true;
-	            } else {
-	            	CARBON.showWarningDialog(msg);
-	                status = false;
-	            }
-	        }
-	    });	    
-    }
-    
-    return status;
+    return  true;
+
 }
 
 function validateManageXADSForm(){
@@ -524,7 +452,6 @@ function showTables(obj, document) {
     var autoResponse = 'none';
     var cassandra = 'none';
     var CustomQuery = 'none';
-    var mongoDB = 'none';
 
     if (datasourceType == 'RDBMS' || datasourceType == 'JNDI' || datasourceType == 'CARBON_DATASOURCE') {
         rdbmsNjndi = '';
@@ -550,14 +477,6 @@ function showTables(obj, document) {
             inputHeading = '';
             autoResponse ='';
     	}
-    }
-    if (datasourceType == 'MongoDB') {
-        mongoDB = '';
-        inputMappings = '';
-        inputMappingsButton = '';
-        queryProp = '';
-        inputHeading = '';
-        autoResponse ='';
     }
     if (datasourceType == 'Cassandra') {
         cassandra = '';
@@ -597,7 +516,6 @@ function showTables(obj, document) {
     document.getElementById('scraperRow').style.display = webConfig;
     document.getElementById('CASSANDRARow').style.display = cassandra;
     document.getElementById('CustomQueryRow').style.display = CustomQuery;
-    document.getElementById('MongoDBQueryRow').style.display = mongoDB;
     //document.getElementById('autoResponseRow').style.display = autoResponse;
     
 }
@@ -1019,12 +937,12 @@ function deleteQuery(obj){
 
 }
 
-function deleteResources(objPath, objMethod){
+function deleteResources(obj){
     function forwardToDel() {
-        var url = 'resourceProcessor.jsp?action=remove&oldResourcePath='+objPath+'&oldResourceMethod='+objMethod;
+        var url = 'resourceProcessor.jsp?action=remove&oldResourcePath='+obj;
         document.location.href = url;
     }
-    CARBON.showConfirmationDialog('Do you want to delete resource '+objPath+'?', forwardToDel);
+    CARBON.showConfirmationDialog('Do you want to delete resource '+obj+'?', forwardToDel);
 
 }
 
@@ -1245,24 +1163,12 @@ function changeXAType(obj, document) {
 function outputTypeVisibilityOnChange(obj, document) {
     var selectedValue = obj[obj.selectedIndex].value;
     var visibile = null;
-    if (selectedValue == 'rdf') {
+    if(selectedValue == 'rdf'){
         document.getElementById('xmlResultTypeRow').style.display = 'none';
         document.getElementById('rdfResultTypeRow').style.display = '';
-        document.getElementById('jsonResultTypeRow').style.display = 'none';
-        document.getElementById('addOutputMappingsRow').style.display = '';
-        document.getElementById('existingOutputMappingsTable').style.display = '';
-    } else if (selectedValue == 'xml') {
+    }else{
         document.getElementById('xmlResultTypeRow').style.display = '';
         document.getElementById('rdfResultTypeRow').style.display = 'none';
-        document.getElementById('jsonResultTypeRow').style.display = 'none';
-        document.getElementById('addOutputMappingsRow').style.display = '';
-        document.getElementById('existingOutputMappingsTable').style.display = '';
-    } else if (selectedValue == 'json') {
-        document.getElementById('xmlResultTypeRow').style.display = 'none';
-        document.getElementById('rdfResultTypeRow').style.display = 'none';
-        document.getElementById('jsonResultTypeRow').style.display = '';
-        document.getElementById('addOutputMappingsRow').style.display = 'none';
-        document.getElementById('existingOutputMappingsTable').style.display = 'none';
     }
 }
 
@@ -1859,10 +1765,6 @@ function ValidateDataSourceProperties() {
 		CARBON.showErrorDialog("Please enter a positive numeric value for Suspect Timeout");
 		return false;
 	}
-	if (isNaN(document.getElementById("validationQueryTimeout").value) || document.getElementById("validationQueryTimeout").value < 0) {
-    	CARBON.showErrorDialog("Please enter a positive numeric value for Validation Query Timeout");
-    	return false;
-    }
 	return true;
 }
 
@@ -1876,22 +1778,6 @@ function showGsExcelProperties(checkbx, dsType) {
 		document.getElementById("sheetNameTr").style.display = 'none';
 		document.getElementById("useQueryModeValue").value = "false";
 	}
-}
-
-function hasHeaderOnChange(obj, document) {
-	var selectedValue = obj[obj.selectedIndex].value;
-	var comboId = obj.id;
-    dval = null;
-    if (selectedValue == "true") {
-        dval = "table-row";
-    } else {
-        dval = "none";
-    }
-    if (comboId == "txtExcelHeaderColumns") {
-        document.getElementById('tr:excel.header.row').style.display = dval;
-    } else if (comboId == "txtGSpreadHeaderColumns") {
-        document.getElementById('tr:gspred.header.row').style.display = dval;
-    }
 }
 
 function changeCustomDsType() {

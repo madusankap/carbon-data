@@ -32,7 +32,6 @@ import org.wso2.carbon.dataservices.core.engine.QueryParam;
 import org.wso2.carbon.dataservices.core.engine.Result;
 
 import javax.xml.stream.XMLStreamWriter;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -77,14 +76,7 @@ public class WebQuery extends Query {
     public void runQuery(XMLStreamWriter xmlWriter, InternalParamCollection params,
                                      int queryLevel)
             throws DataServiceFault {
-        Variable scrapedOutput = (Variable) Query.getAndRemoveQueryPreprocessObject("scrapedOutput");
-        if (scrapedOutput == null) {
-            scrapedOutput = this.getConfig().getScrapedResult(getScraperVariable());
-            if (Query.isQueryPreprocessInitial()) {
-                Query.setQueryPreprocessedObject(scraperVariable, "scrapedOutput");
-                return;
-            }
-        }
+        Variable scrapedOutput = this.getConfig().getScrapedResult(getScraperVariable());
         try {
             OMElement resultEl = AXIOMUtil.stringToOM(scrapedOutput.toString());
             OMElement entryEl, fieldEl;
