@@ -1,19 +1,28 @@
-<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://admin.core.dataservices.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ax294="http://script.core.dataservices.carbon.wso2.org/xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://admin.core.dataservices.carbon.wso2.org">
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:ns="http://admin.core.dataservices.carbon.wso2.org" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ax2135="http://script.core.dataservices.carbon.wso2.org/xsd" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://admin.core.dataservices.carbon.wso2.org">
     <wsdl:documentation>DataServiceAdmin</wsdl:documentation>
     <wsdl:types>
-        <xs:schema xmlns:ax295="http://script.core.dataservices.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.core.dataservices.carbon.wso2.org">
+        <xs:schema xmlns:ax2136="http://script.core.dataservices.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.core.dataservices.carbon.wso2.org">
             <xs:import namespace="http://script.core.dataservices.carbon.wso2.org/xsd"></xs:import>
-            <xs:element name="validateJSONMapping">
+            <xs:element name="getDataServiceContentAsString">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="jsonMapping" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="serviceId" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="validateJSONMappingResponse">
+            <xs:element name="getDataServiceContentAsStringResponse">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="saveDataService">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="serviceName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="serviceHierarchy" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="serviceContents" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -53,12 +62,55 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="saveDataService">
+            <xs:element name="getAvailableDS">
+                <xs:complexType>
+                    <xs:sequence></xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getAvailableDSResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="serviceName" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="serviceHierarchy" nillable="true" type="xs:string"></xs:element>
-                        <xs:element minOccurs="0" name="serviceContents" nillable="true" type="xs:string"></xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getCarbonDataSourceNames">
+                <xs:complexType>
+                    <xs:sequence></xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getCarbonDataSourceNamesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getCarbonDataSourceNamesForTypes">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="types" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getCarbonDataSourceNamesForTypesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getCarbonDataSourceType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="dsName" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getCarbonDataSourceTypeResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -74,6 +126,34 @@
                     <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string"></xs:element>
                 </xs:sequence>
             </xs:complexType>
+            <xs:element name="getOutputColumnNames">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="sql" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getOutputColumnNamesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getInputMappingNames">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="sql" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getInputMappingNamesResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
             <xs:element name="getdbSchemaList">
                 <xs:complexType>
                     <xs:sequence>
@@ -85,6 +165,21 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getPaginatedSchemaInfo">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="pageNumber" type="xs:int"></xs:element>
+                        <xs:element minOccurs="0" name="datasourceId" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getPaginatedSchemaInfoResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax2135:PaginatedTableInfo"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -117,64 +212,7 @@
             <xs:element name="getPaginatedTableInfoResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax294:PaginatedTableInfo"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getPaginatedSchemaInfo">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="pageNumber" type="xs:int"></xs:element>
-                        <xs:element minOccurs="0" name="datasourceId" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getPaginatedSchemaInfoResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="ax294:PaginatedTableInfo"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getOutputColumnNames">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="sql" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getOutputColumnNamesResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getInputMappingNames">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="sql" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getInputMappingNamesResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getDataServiceContentAsString">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="serviceId" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getDataServiceContentAsStringResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="return" nillable="true" type="ax2135:PaginatedTableInfo"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -217,55 +255,17 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getCarbonDataSourceType">
+            <xs:element name="validateJSONMapping">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="dsName" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="jsonMapping" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="getCarbonDataSourceTypeResponse">
+            <xs:element name="validateJSONMappingResponse">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getCarbonDataSourceNamesForTypes">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="types" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getCarbonDataSourceNamesForTypesResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getCarbonDataSourceNames">
-                <xs:complexType>
-                    <xs:sequence></xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getCarbonDataSourceNamesResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAvailableDS">
-                <xs:complexType>
-                    <xs:sequence></xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="getAvailableDSResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="0" name="return" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -345,17 +345,17 @@
     <wsdl:message name="getInputMappingNamesResponse">
         <wsdl:part name="parameters" element="ns:getInputMappingNamesResponse"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="getDataServiceContentAsStringRequest">
-        <wsdl:part name="parameters" element="ns:getDataServiceContentAsString"></wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="getDataServiceContentAsStringResponse">
-        <wsdl:part name="parameters" element="ns:getDataServiceContentAsStringResponse"></wsdl:part>
-    </wsdl:message>
     <wsdl:message name="testJDBCConnectionRequest">
         <wsdl:part name="parameters" element="ns:testJDBCConnection"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="testJDBCConnectionResponse">
         <wsdl:part name="parameters" element="ns:testJDBCConnectionResponse"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getDataServiceContentAsStringRequest">
+        <wsdl:part name="parameters" element="ns:getDataServiceContentAsString"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getDataServiceContentAsStringResponse">
+        <wsdl:part name="parameters" element="ns:getDataServiceContentAsStringResponse"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="getCarbonDataSourceNamesForTypesRequest">
         <wsdl:part name="parameters" element="ns:getCarbonDataSourceNamesForTypes"></wsdl:part>
@@ -430,13 +430,13 @@
             <wsdl:output message="ns:getInputMappingNamesResponse" wsaw:Action="urn:getInputMappingNamesResponse"></wsdl:output>
             <wsdl:fault message="ns:DataServiceAdminException" name="DataServiceAdminException" wsaw:Action="urn:getInputMappingNamesDataServiceAdminException"></wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="getDataServiceContentAsString">
-            <wsdl:input message="ns:getDataServiceContentAsStringRequest" wsaw:Action="urn:getDataServiceContentAsString"></wsdl:input>
-            <wsdl:output message="ns:getDataServiceContentAsStringResponse" wsaw:Action="urn:getDataServiceContentAsStringResponse"></wsdl:output>
-        </wsdl:operation>
         <wsdl:operation name="testJDBCConnection">
             <wsdl:input message="ns:testJDBCConnectionRequest" wsaw:Action="urn:testJDBCConnection"></wsdl:input>
             <wsdl:output message="ns:testJDBCConnectionResponse" wsaw:Action="urn:testJDBCConnectionResponse"></wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getDataServiceContentAsString">
+            <wsdl:input message="ns:getDataServiceContentAsStringRequest" wsaw:Action="urn:getDataServiceContentAsString"></wsdl:input>
+            <wsdl:output message="ns:getDataServiceContentAsStringResponse" wsaw:Action="urn:getDataServiceContentAsStringResponse"></wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getCarbonDataSourceNamesForTypes">
             <wsdl:input message="ns:getCarbonDataSourceNamesForTypesRequest" wsaw:Action="urn:getCarbonDataSourceNamesForTypes"></wsdl:input>
@@ -537,6 +537,15 @@
                 <soap:fault use="literal" name="DataServiceAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="validateJSONMapping">
+            <soap:operation soapAction="urn:validateJSONMapping" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getPaginatedTableInfo">
             <soap:operation soapAction="urn:getPaginatedTableInfo" style="document"></soap:operation>
             <wsdl:input>
@@ -548,15 +557,6 @@
             <wsdl:fault name="DataServiceAdminException">
                 <soap:fault use="literal" name="DataServiceAdminException"></soap:fault>
             </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="validateJSONMapping">
-            <soap:operation soapAction="urn:validateJSONMapping" style="document"></soap:operation>
-            <wsdl:input>
-                <soap:body use="literal"></soap:body>
-            </wsdl:input>
-            <wsdl:output>
-                <soap:body use="literal"></soap:body>
-            </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getInputMappingNames">
             <soap:operation soapAction="urn:getInputMappingNames" style="document"></soap:operation>
@@ -570,8 +570,8 @@
                 <soap:fault use="literal" name="DataServiceAdminException"></soap:fault>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="testJDBCConnection">
-            <soap:operation soapAction="urn:testJDBCConnection" style="document"></soap:operation>
+        <wsdl:operation name="getDataServiceContentAsString">
+            <soap:operation soapAction="urn:getDataServiceContentAsString" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -579,8 +579,8 @@
                 <soap:body use="literal"></soap:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getDataServiceContentAsString">
-            <soap:operation soapAction="urn:getDataServiceContentAsString" style="document"></soap:operation>
+        <wsdl:operation name="testJDBCConnection">
+            <soap:operation soapAction="urn:testJDBCConnection" style="document"></soap:operation>
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
@@ -711,6 +711,15 @@
                 <soap12:fault use="literal" name="DataServiceAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="validateJSONMapping">
+            <soap12:operation soapAction="urn:validateJSONMapping" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="getPaginatedTableInfo">
             <soap12:operation soapAction="urn:getPaginatedTableInfo" style="document"></soap12:operation>
             <wsdl:input>
@@ -722,15 +731,6 @@
             <wsdl:fault name="DataServiceAdminException">
                 <soap12:fault use="literal" name="DataServiceAdminException"></soap12:fault>
             </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="validateJSONMapping">
-            <soap12:operation soapAction="urn:validateJSONMapping" style="document"></soap12:operation>
-            <wsdl:input>
-                <soap12:body use="literal"></soap12:body>
-            </wsdl:input>
-            <wsdl:output>
-                <soap12:body use="literal"></soap12:body>
-            </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="getInputMappingNames">
             <soap12:operation soapAction="urn:getInputMappingNames" style="document"></soap12:operation>
@@ -744,8 +744,8 @@
                 <soap12:fault use="literal" name="DataServiceAdminException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
-        <wsdl:operation name="testJDBCConnection">
-            <soap12:operation soapAction="urn:testJDBCConnection" style="document"></soap12:operation>
+        <wsdl:operation name="getDataServiceContentAsString">
+            <soap12:operation soapAction="urn:getDataServiceContentAsString" style="document"></soap12:operation>
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
@@ -753,8 +753,8 @@
                 <soap12:body use="literal"></soap12:body>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getDataServiceContentAsString">
-            <soap12:operation soapAction="urn:getDataServiceContentAsString" style="document"></soap12:operation>
+        <wsdl:operation name="testJDBCConnection">
+            <soap12:operation soapAction="urn:testJDBCConnection" style="document"></soap12:operation>
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
@@ -876,8 +876,8 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getPaginatedTableInfo">
-            <http:operation location="getPaginatedTableInfo"></http:operation>
+        <wsdl:operation name="validateJSONMapping">
+            <http:operation location="validateJSONMapping"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
@@ -885,8 +885,8 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="validateJSONMapping">
-            <http:operation location="validateJSONMapping"></http:operation>
+        <wsdl:operation name="getPaginatedTableInfo">
+            <http:operation location="getPaginatedTableInfo"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
@@ -903,8 +903,8 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="testJDBCConnection">
-            <http:operation location="testJDBCConnection"></http:operation>
+        <wsdl:operation name="getDataServiceContentAsString">
+            <http:operation location="getDataServiceContentAsString"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
@@ -912,8 +912,8 @@
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:output>
         </wsdl:operation>
-        <wsdl:operation name="getDataServiceContentAsString">
-            <http:operation location="getDataServiceContentAsString"></http:operation>
+        <wsdl:operation name="testJDBCConnection">
+            <http:operation location="testJDBCConnection"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
@@ -960,13 +960,13 @@
     </wsdl:binding>
     <wsdl:service name="DataServiceAdmin">
         <wsdl:port name="DataServiceAdminHttpsSoap11Endpoint" binding="ns:DataServiceAdminSoap11Binding">
-            <soap:address location="https://10.100.1.45:9443/services/DataServiceAdmin.DataServiceAdminHttpsSoap11Endpoint/"></soap:address>
+            <soap:address location="https://10.100.5.149:9443/services/DataServiceAdmin.DataServiceAdminHttpsSoap11Endpoint/"></soap:address>
         </wsdl:port>
         <wsdl:port name="DataServiceAdminHttpsSoap12Endpoint" binding="ns:DataServiceAdminSoap12Binding">
-            <soap12:address location="https://10.100.1.45:9443/services/DataServiceAdmin.DataServiceAdminHttpsSoap12Endpoint/"></soap12:address>
+            <soap12:address location="https://10.100.5.149:9443/services/DataServiceAdmin.DataServiceAdminHttpsSoap12Endpoint/"></soap12:address>
         </wsdl:port>
         <wsdl:port name="DataServiceAdminHttpsEndpoint" binding="ns:DataServiceAdminHttpBinding">
-            <http:address location="https://10.100.1.45:9443/services/DataServiceAdmin.DataServiceAdminHttpsEndpoint/"></http:address>
+            <http:address location="https://10.100.5.149:9443/services/DataServiceAdmin.DataServiceAdminHttpsEndpoint/"></http:address>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
