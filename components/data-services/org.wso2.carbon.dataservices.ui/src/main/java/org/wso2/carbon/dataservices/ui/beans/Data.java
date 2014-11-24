@@ -58,7 +58,16 @@ public class Data extends DataServiceConfigurationElement{
 	private String txManagerCleanupMethod;
 	
 	private boolean disableStreaming;
-	
+
+    public boolean isManagedApi() {
+        return managedApi;
+    }
+
+    public void setManagedApi(boolean managedApi) {
+        this.managedApi = managedApi;
+    }
+
+    private boolean managedApi;
     private String protectedTokens;
     
     private String passwordProvider;
@@ -943,6 +952,11 @@ public class Data extends DataServiceConfigurationElement{
 		if (enableBoxcarring != null) {
 			setBoxcarring(Boolean.parseBoolean(enableBoxcarring.getAttributeValue()));
 		}
+        /* enable managedApi property */
+        OMAttribute managedApi = dsXml.getAttribute(new QName("managedApi"));
+        if (managedApi != null) {
+            setManagedApi(Boolean.parseBoolean(managedApi.getAttributeValue()));
+        }
 
 		/* disable streaming property */
 		OMAttribute disableStreaming = dsXml.getAttribute(new QName("disableStreaming"));
@@ -1268,7 +1282,9 @@ public class Data extends DataServiceConfigurationElement{
         if (this.isDisableStreaming()) {
         	dataEl.addAttribute("disableStreaming", String.valueOf(this.isDisableStreaming()), null);
         }
-        
+        if (this.isManagedApi()) {
+            dataEl.addAttribute("managedApi", String.valueOf(this.isManagedApi()), null);
+        }
 //		if (this.isEnableXA()) {
 //			OMElement txManagementEle = fac.createOMElement("transactionManagement", null);
 //			OMElement enableXAEl = fac.createOMElement("enableXA", null);

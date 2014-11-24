@@ -162,7 +162,20 @@ public class DataService {
      * flag to check if streaming is disabled
      */
     private boolean disableStreaming;
-    
+
+    public boolean isManagedApi() {
+        return managedApi;
+    }
+
+    public void setManagedApi(boolean managedApi) {
+        this.managedApi = managedApi;
+    }
+
+    /**
+     * flag to check if api is disabled
+     */
+    private boolean managedApi;
+
     /**
      * The tenant to which this service belongs to.
      */

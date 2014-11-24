@@ -107,7 +107,13 @@ public class DataServiceFactory {
             if (disableStreamingStr != null) {
                 disableStreaming = Boolean.parseBoolean(disableStreamingStr);
             }
-
+            /*managedApi Property*/
+            boolean managedApi = false;
+            String managedApiStr = dbsElement.getAttributeValue(
+                    new QName(DBSFields.MANAGED_API));
+            if (managedApiStr != null) {
+                managedApi = Boolean.parseBoolean(managedApiStr);
+            }
             /* txManagerName property */
             String userTxJNDIName = dbsElement.getAttributeValue(
                     new QName(DBSFields.TRANSACTION_MANAGER_JNDI_NAME));
@@ -122,7 +128,8 @@ public class DataServiceFactory {
 
             /* set disable streaming */
             dataService.setDisableStreaming(disableStreaming);
-
+            /*set managedApi Property*/
+            dataService.setManagedApi(managedApi);
             /* add the password manager */
             Iterator<OMElement> passwordMngrItr = dbsElement.getChildrenWithName(
                     new QName(SecurityConstants.PASSWORD_MANAGER_SIMPLE));
