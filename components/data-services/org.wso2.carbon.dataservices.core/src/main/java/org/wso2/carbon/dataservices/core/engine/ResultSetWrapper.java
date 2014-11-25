@@ -992,7 +992,7 @@ public class ResultSetWrapper implements ResultSet {
         this.getResultSet().updateNClob(columnLabel, reader);
     }
 
-    @Override
+   /* @Override
     public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
         return null;
     }
@@ -1001,7 +1001,7 @@ public class ResultSetWrapper implements ResultSet {
     public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
         return null;
     }
-
+*/
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
         return this.getResultSet().unwrap(iface);

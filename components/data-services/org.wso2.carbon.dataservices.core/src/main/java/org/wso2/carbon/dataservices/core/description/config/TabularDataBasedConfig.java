@@ -128,10 +128,10 @@ public class TabularDataBasedConfig extends SQLConfig {
 			return loginTimeout;
 		}
 
-		@Override
+		/*@Override
 		public Logger getParentLogger() throws SQLFeatureNotSupportedException {
 			return null;
-		}
+		}*/
 
 		@Override
 		public void setLogWriter(PrintWriter logWriter) throws SQLException {
