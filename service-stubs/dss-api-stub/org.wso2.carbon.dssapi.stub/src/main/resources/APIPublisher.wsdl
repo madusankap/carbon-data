@@ -3,22 +3,17 @@
     <wsdl:types>
         <xs:schema xmlns:ax2144="http://mgt.service.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.core.dataservices.carbon.wso2.org">
             <xs:import namespace="http://mgt.service.carbon.wso2.org/xsd"></xs:import>
-            <xs:element name="APIPublisherException">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="APIPublisherException" nillable="true" type="ns:Exception"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:complexType name="Exception">
-                <xs:sequence>
-                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string"></xs:element>
-                </xs:sequence>
-            </xs:complexType>
             <xs:element name="removeApi">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="serviceId" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="removeApiResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -43,6 +38,25 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="AddApiResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="APIPublisherException">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="APIPublisherException" nillable="true" type="ns:Exception"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="Exception">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string"></xs:element>
+                </xs:sequence>
+            </xs:complexType>
             <xs:element name="listDssServices">
                 <xs:complexType>
                     <xs:sequence>
@@ -106,8 +120,8 @@
     <wsdl:message name="removeApiRequest">
         <wsdl:part name="parameters" element="ns:removeApi"></wsdl:part>
     </wsdl:message>
-    <wsdl:message name="APIPublisherException">
-        <wsdl:part name="parameters" element="ns:APIPublisherException"></wsdl:part>
+    <wsdl:message name="removeApiResponse">
+        <wsdl:part name="parameters" element="ns:removeApiResponse"></wsdl:part>
     </wsdl:message>
     <wsdl:message name="listDssServicesRequest">
         <wsdl:part name="parameters" element="ns:listDssServices"></wsdl:part>
@@ -115,8 +129,14 @@
     <wsdl:message name="listDssServicesResponse">
         <wsdl:part name="parameters" element="ns:listDssServicesResponse"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="APIPublisherException">
+        <wsdl:part name="parameters" element="ns:APIPublisherException"></wsdl:part>
+    </wsdl:message>
     <wsdl:message name="AddApiRequest">
         <wsdl:part name="parameters" element="ns:AddApi"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="AddApiResponse">
+        <wsdl:part name="parameters" element="ns:AddApiResponse"></wsdl:part>
     </wsdl:message>
     <wsdl:portType name="APIPublisherPortType">
         <wsdl:operation name="apiAvailable">
@@ -125,7 +145,7 @@
         </wsdl:operation>
         <wsdl:operation name="removeApi">
             <wsdl:input message="tns:removeApiRequest" wsaw:Action="urn:removeApi"></wsdl:input>
-            <wsdl:fault message="tns:APIPublisherException" name="APIPublisherException" wsaw:Action="urn:removeApiAPIPublisherException"></wsdl:fault>
+            <wsdl:output message="tns:removeApiResponse" wsaw:Action="urn:removeApiResponse"></wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="listDssServices">
             <wsdl:input message="tns:listDssServicesRequest" wsaw:Action="urn:listDssServices"></wsdl:input>
@@ -134,7 +154,7 @@
         </wsdl:operation>
         <wsdl:operation name="AddApi">
             <wsdl:input message="tns:AddApiRequest" wsaw:Action="urn:AddApi"></wsdl:input>
-            <wsdl:fault message="tns:APIPublisherException" name="APIPublisherException" wsaw:Action="urn:AddApiAPIPublisherException"></wsdl:fault>
+            <wsdl:output message="tns:AddApiResponse" wsaw:Action="urn:AddApiResponse"></wsdl:output>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="APIPublisherSoap11Binding" type="tns:APIPublisherPortType">
@@ -153,9 +173,9 @@
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
-            <wsdl:fault name="APIPublisherException">
-                <soap:fault use="literal" name="APIPublisherException"></soap:fault>
-            </wsdl:fault>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="listDssServices">
             <soap:operation soapAction="urn:listDssServices" style="document"></soap:operation>
@@ -174,9 +194,9 @@
             <wsdl:input>
                 <soap:body use="literal"></soap:body>
             </wsdl:input>
-            <wsdl:fault name="APIPublisherException">
-                <soap:fault use="literal" name="APIPublisherException"></soap:fault>
-            </wsdl:fault>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:binding name="APIPublisherSoap12Binding" type="tns:APIPublisherPortType">
@@ -195,9 +215,9 @@
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
-            <wsdl:fault name="APIPublisherException">
-                <soap12:fault use="literal" name="APIPublisherException"></soap12:fault>
-            </wsdl:fault>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="listDssServices">
             <soap12:operation soapAction="urn:listDssServices" style="document"></soap12:operation>
@@ -216,9 +236,9 @@
             <wsdl:input>
                 <soap12:body use="literal"></soap12:body>
             </wsdl:input>
-            <wsdl:fault name="APIPublisherException">
-                <soap12:fault use="literal" name="APIPublisherException"></soap12:fault>
-            </wsdl:fault>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:binding name="APIPublisherHttpBinding" type="tns:APIPublisherPortType">
@@ -237,6 +257,9 @@
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="listDssServices">
             <http:operation location="listDssServices"></http:operation>
@@ -252,6 +275,9 @@
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:service name="APIPublisher">
