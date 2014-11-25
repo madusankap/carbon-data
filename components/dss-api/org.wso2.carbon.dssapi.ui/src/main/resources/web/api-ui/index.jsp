@@ -1,7 +1,11 @@
-<%@ page import="org.wso2.carbon.dssapi.common.APIModel" %>
+<%@ page import="org.wso2.carbon.dssapi.common.*" %>
 <%@ page import="org.wso2.carbon.dssapi.stub.*" %>
-<%@ page import="org.wso2.carbon.dssapi.core.APIPublisher" %>
-<%@ page import="org.wso2.carbon.service.mgt.xsd.ServiceMetaDataWrapper" %>
+<%@ page import="org.wso2.carbon.dssapi.core.*" %>
+<%@ page import="org.wso2.carbon.service.mgt.xsd.*" %>
+<%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
+<%@ page import="org.apache.axis2.context.ConfigurationContext" %>
+<%@ page import="org.wso2.carbon.CarbonConstants" %>
+<%@ page import="org.wso2.carbon.utils.ServerConstants" %>
 
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
@@ -11,11 +15,22 @@
 </script>
 
 <%
-    APIPublisherStub apiPublisherStub = new APIPublisherStub();
-    ServiceMetaDataWrapper serviceMetaDataWrapper;
-    serviceMetaDataWrapper = apiPublisherStub.listDssServices("", 0);
+    int activeServices;
+    try {
+        String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
+        ConfigurationContext configContext =
+                (ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
+        String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
 
-    int activeServices = serviceMetaDataWrapper.getNumberOfActiveServices();
+        APIPublisherStub apiPublisherStub = new APIPublisherStub(configContext,)
+        ServiceMetaDataWrapper serviceMetaDataWrapper;
+        serviceMetaDataWrapper = apiPublisherStub.listDssServices("", 0);
+
+        activeServices = serviceMetaDataWrapper.getNumberOfActiveServices();
+    }
+
+
+
 %>
 
 <div id="middle">
