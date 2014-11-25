@@ -14,14 +14,14 @@ import org.wso2.carbon.dataservices.core.engine.DataService;
 import org.wso2.carbon.dssapi.util.APIUtil;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
-/**
- * Created by tharindud on 11/20/14.
- */
 public class ApiDeployer implements AxisObserver {
-
+ APIUtil apiutil;
+    private Logger logger=Logger.getLogger(ApiDeployer.class.getName());
     @Override
     public void init(AxisConfiguration axisConfiguration) {
+            apiutil=new APIUtil();
     }
 
     @Override
@@ -29,23 +29,22 @@ public class ApiDeployer implements AxisObserver {
         switch (axisEvent.getEventType())
         {
             case AxisEvent.SERVICE_DEPLOY : // handle new service deployment
-
-                break;
-            case AxisEvent.SERVICE_REMOVE : // handle service removal
-
-                break;
-            case AxisEvent.SERVICE_START : // handle service start
-                DataService dataService =getDataServiceObject(axisService);
+                  DataService dataService =getDataServiceObject(axisService);
                 if(dataService!=null){
                     if(dataService.isManagedApi()){
-                        new APIUtil().addApi(dataService.getName());
+                        apiutil.addApi(dataService.getName());
+                    }else{
+                        apiutil.removeApi(dataService.getName());
                     }
                 }
+                break;
+            case AxisEvent.SERVICE_REMOVE : // handle service removal
+                break;
+            case AxisEvent.SERVICE_START : // handle service start
                 break;
             case AxisEvent.SERVICE_STOP : // handle service stop
                 break;
         }
-
     }
 
     private DataService getDataServiceObject(AxisService axisService) {

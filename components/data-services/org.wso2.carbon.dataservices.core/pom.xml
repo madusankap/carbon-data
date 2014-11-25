@@ -153,7 +153,7 @@
             <groupId>com.datastax.cassandra.wso2</groupId>
             <artifactId>cassandra-driver-core</artifactId>
         </dependency>
-    </dependencies>
+        </dependencies>
 
     <build>
         <plugins>
