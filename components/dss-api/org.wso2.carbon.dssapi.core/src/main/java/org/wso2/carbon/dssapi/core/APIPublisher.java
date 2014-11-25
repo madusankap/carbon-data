@@ -21,6 +21,7 @@ package org.wso2.carbon.dssapi.core;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axis2.AxisFault;
 import org.wso2.carbon.dataservices.common.DBConstants;
 import org.wso2.carbon.dataservices.core.admin.DataServiceAdmin;
 import org.wso2.carbon.dataservices.ui.beans.Data;
@@ -58,32 +59,46 @@ public class APIPublisher {
      * @param serviceId
      * @throws Exception
      */
-    public void AddApi(String serviceId) throws Exception {
+    public boolean AddApi(String serviceId){
         String serviceContents;
-        serviceContents = new DataServiceAdmin().getDataServiceContentAsString(serviceId);
-        InputStream ins = new ByteArrayInputStream(serviceContents.getBytes());
-        OMElement configElement = (new StAXOMBuilder(ins)).getDocumentElement();
-        configElement.build();
-        Data data = new Data();
-        data.populate(configElement);
-        data.setManagedApi(true);
-        new DataServiceAdmin().saveDataService(serviceId, "", data.buildXML().toString());
-        //  new APIUtil().addApi(data.getName());
+        boolean Status = false;
+        try {
+            serviceContents = new DataServiceAdmin().getDataServiceContentAsString(serviceId);
+            InputStream ins = new ByteArrayInputStream(serviceContents.getBytes());
+            OMElement configElement = (new StAXOMBuilder(ins)).getDocumentElement();
+            configElement.build();
+            Data data = new Data();
+            data.populate(configElement);
+            data.setManagedApi(true);
+            new DataServiceAdmin().saveDataService(serviceId, "", data.buildXML().toString());
+            Status=true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+return Status;
+
     }
 
     /**
      * @param serviceId
-     * @throws Exception this will
+     * @return  api is removed from api manager
      */
-    public void removeApi(String serviceId) throws Exception {
+    public boolean removeApi(String serviceId) {
         String serviceContents;
-        serviceContents = new DataServiceAdmin().getDataServiceContentAsString(serviceId);
-        InputStream ins = new ByteArrayInputStream(serviceContents.getBytes());
-        OMElement configElement = (new StAXOMBuilder(ins)).getDocumentElement();
-        configElement.build();
-        Data data = new Data();
-        data.populate(configElement);
-        data.setManagedApi(false);
-        new DataServiceAdmin().saveDataService(serviceId, "", data.buildXML().toString());
+        boolean Status=false;
+        try {
+            serviceContents = new DataServiceAdmin().getDataServiceContentAsString(serviceId);
+            InputStream ins = new ByteArrayInputStream(serviceContents.getBytes());
+            OMElement configElement = (new StAXOMBuilder(ins)).getDocumentElement();
+            configElement.build();
+            Data data = new Data();
+            data.populate(configElement);
+            data.setManagedApi(false);
+            new DataServiceAdmin().saveDataService(serviceId, "", data.buildXML().toString());
+            Status=true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+return Status;
     }
 }
