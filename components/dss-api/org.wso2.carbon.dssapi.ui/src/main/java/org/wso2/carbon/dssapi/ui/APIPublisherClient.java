@@ -78,6 +78,16 @@ public class APIPublisherClient {
 
     /**
      *
+     * @return number of active services
+     * @throws RemoteException
+     * @throws APIPublisherException
+     */
+    public int getNumberOfServices() throws Exception {
+        return stub.listDssServices("",0).getServices().length;
+    }
+
+    /**
+     *
      * @return all the services
      * @throws RemoteException
      * @throws APIPublisherException
@@ -119,10 +129,4 @@ public class APIPublisherClient {
         String serviceId = serviceMetaData.getName().toString();
         return stub.removeApi(serviceId);
     }
-
-
-
-
-
-
 }
