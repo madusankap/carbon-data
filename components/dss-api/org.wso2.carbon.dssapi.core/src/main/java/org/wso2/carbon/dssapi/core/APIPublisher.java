@@ -59,7 +59,7 @@ public class APIPublisher {
      * @param serviceId
      * @throws Exception
      */
-    public boolean AddApi(String serviceId){
+    public boolean AddApi(String serviceId) {
         String serviceContents;
         boolean Status = false;
         try {
@@ -71,21 +71,21 @@ public class APIPublisher {
             data.populate(configElement);
             data.setManagedApi(true);
             new DataServiceAdmin().saveDataService(serviceId, "", data.buildXML().toString());
-            Status=true;
+            Status = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
-return Status;
+        return Status;
 
     }
 
     /**
      * @param serviceId
-     * @return  api is removed from api manager
+     * @return api is removed from api manager
      */
     public boolean removeApi(String serviceId) {
         String serviceContents;
-        boolean Status=false;
+        boolean Status = false;
         try {
             serviceContents = new DataServiceAdmin().getDataServiceContentAsString(serviceId);
             InputStream ins = new ByteArrayInputStream(serviceContents.getBytes());
@@ -95,10 +95,10 @@ return Status;
             data.populate(configElement);
             data.setManagedApi(false);
             new DataServiceAdmin().saveDataService(serviceId, "", data.buildXML().toString());
-            Status=true;
+            Status = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
-return Status;
+        return Status;
     }
 }
