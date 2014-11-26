@@ -1,4 +1,3 @@
-<%@ page import="org.wso2.carbon.dssapi.common.*" %>
 <%@ page import="org.wso2.carbon.dssapi.stub.*" %>
 <%@ page import="org.wso2.carbon.dssapi.core.*" %>
 <%@ page import="org.wso2.carbon.service.mgt.xsd.*" %>
@@ -6,6 +5,8 @@
 <%@ page import="org.apache.axis2.context.ConfigurationContext" %>
 <%@ page import="org.wso2.carbon.CarbonConstants" %>
 <%@ page import="org.wso2.carbon.utils.ServerConstants" %>
+<%@ page import="org.wso2.carbon.dssapi.ui.APIPublisherClient" %>
+<%@ page import="org.wso2.carbon.CarbonError" %>
 
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
@@ -15,22 +16,26 @@
 </script>
 
 <%
-    int activeServices;
+    int activeServices = 0;
     try {
         String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
         ConfigurationContext configContext =
                 (ConfigurationContext) config.getServletContext().getAttribute(CarbonConstants.CONFIGURATION_CONTEXT);
         String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
 
-        APIPublisherStub apiPublisherStub = new APIPublisherStub(configContext,)
-        ServiceMetaDataWrapper serviceMetaDataWrapper;
-        serviceMetaDataWrapper = apiPublisherStub.listDssServices("", 0);
-
-        activeServices = serviceMetaDataWrapper.getNumberOfActiveServices();
+        APIPublisherClient apiPublisherClient = new APIPublisherClient(cookie,backendServerURL,configContext);
+        activeServices = apiPublisherClient.getNumberOfActiveServices();
+    } catch (Exception e) {
+        CarbonError carbonError = new CarbonError();
+        carbonError.addError("Error occurred while saving data service configuration.");
+        request.setAttribute(CarbonError.ID, carbonError);
+        String errorMsg = e.getLocalizedMessage();
+%>
+<script type="text/javascript">
+    location.href = "../ds/dsErrorPage.jsp?errorMsg=<%=errorMsg%>";
+</script>
+<%
     }
-
-
-
 %>
 
 <div id="middle">

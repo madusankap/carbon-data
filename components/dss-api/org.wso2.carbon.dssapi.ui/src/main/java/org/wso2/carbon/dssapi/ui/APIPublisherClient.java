@@ -61,7 +61,7 @@ public class APIPublisherClient {
      * @throws RemoteException
      * @throws APIPublisherException
      */
-    private int getNumberOfPages() throws RemoteException, APIPublisherException {
+    public int getNumberOfPages() throws RemoteException, APIPublisherException {
         serviceMetaDataWrapper = stub.listDssServices("", 0);
         return serviceMetaDataWrapper.getNumberOfPages();
     }
@@ -72,7 +72,7 @@ public class APIPublisherClient {
      * @throws RemoteException
      * @throws APIPublisherException
      */
-    private int getNumberOfActiveServices() throws RemoteException, APIPublisherException {
+    public int getNumberOfActiveServices() throws Exception {
         return stub.listDssServices("",0).getNumberOfActiveServices();
     }
 
@@ -82,7 +82,7 @@ public class APIPublisherClient {
      * @throws RemoteException
      * @throws APIPublisherException
      */
-    private ServiceMetaData[] getServices() throws RemoteException, APIPublisherException {
+    public ServiceMetaData[] getServices() throws RemoteException, APIPublisherException {
         return stub.listDssServices("",0).getServices();
     }
 
@@ -92,7 +92,7 @@ public class APIPublisherClient {
      * @return api availability of the given service
      * @throws RemoteException
      */
-    private boolean isAPIAvailable(ServiceMetaData serviceMetaData) throws RemoteException {
+    public boolean isAPIAvailable(ServiceMetaData serviceMetaData) throws RemoteException {
         return stub.apiAvailable(serviceMetaData.getName().toString());
     }
 
@@ -104,7 +104,7 @@ public class APIPublisherClient {
      * @throws RemoteException
      * @throws APIPublisherException
      */
-    private boolean publishAPI(ServiceMetaData serviceMetaData) throws RemoteException, APIPublisherException {
+    public boolean publishAPI(ServiceMetaData serviceMetaData) throws RemoteException, APIPublisherException {
         String serviceId = serviceMetaData.getName().toString();
         return stub.addApi(serviceId);
     }
@@ -115,7 +115,7 @@ public class APIPublisherClient {
      * @return status of the operation
      * @throws RemoteException
      */
-    private boolean unpublishAPI(ServiceMetaData serviceMetaData) throws RemoteException {
+    public boolean unpublishAPI(ServiceMetaData serviceMetaData) throws RemoteException {
         String serviceId = serviceMetaData.getName().toString();
         return stub.removeApi(serviceId);
     }
