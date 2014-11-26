@@ -59,9 +59,7 @@
                         <Import-Package>
                             !org.wso2.carbon.dataservices.*,
                             org.wso2.carbon.service.mgt.*,
-                            org.wso2.carbon.dssapi.common.*,
                             org.wso2.carbon.apimgt.*,
-
                             org.apache.axis2.*; version="${axis2.osgi.version.range.data-services}",
                             *;resolution:=optional
                         </Import-Package>

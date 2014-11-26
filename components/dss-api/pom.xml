@@ -11,7 +11,6 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <modules>
-        <module>org.wso2.carbon.dssapi.common</module>
         <module>org.wso2.carbon.dssapi.core</module>
         <module>org.wso2.carbon.dssapi.ui</module>
 
