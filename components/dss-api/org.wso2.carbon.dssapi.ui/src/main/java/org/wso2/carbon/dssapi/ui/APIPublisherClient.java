@@ -39,9 +39,9 @@ public class APIPublisherClient {
     ServiceMetaDataWrapper serviceMetaDataWrapper;
 
     public APIPublisherClient(String cookie, String url, ConfigurationContext configContext) throws AxisFault {
-        String serviceEndpoint;
+        String serviceEndpoint="";
         try {
-            serviceEndpoint = url + "DataServiceAdmin";
+            serviceEndpoint = url + "APIPublisher";
             stub = new APIPublisherStub(configContext,serviceEndpoint);
             ServiceClient client = stub._getServiceClient();
             Options option = client.getOptions();
@@ -94,6 +94,30 @@ public class APIPublisherClient {
      */
     private boolean isAPIAvailable(ServiceMetaData serviceMetaData) throws RemoteException {
         return stub.apiAvailable(serviceMetaData.getName().toString());
+    }
+
+
+    /**
+     *
+     * @param serviceMetaData
+     * @return status of the operation
+     * @throws RemoteException
+     * @throws APIPublisherException
+     */
+    private boolean publishAPI(ServiceMetaData serviceMetaData) throws RemoteException, APIPublisherException {
+        String serviceId = serviceMetaData.getName().toString();
+        return stub.addApi(serviceId);
+    }
+
+    /**
+     *
+     * @param serviceMetaData
+     * @return status of the operation
+     * @throws RemoteException
+     */
+    private boolean unpublishAPI(ServiceMetaData serviceMetaData) throws RemoteException {
+        String serviceId = serviceMetaData.getName().toString();
+        return stub.removeApi(serviceId);
     }
 
 
