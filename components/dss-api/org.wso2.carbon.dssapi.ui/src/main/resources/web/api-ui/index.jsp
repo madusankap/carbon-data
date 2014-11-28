@@ -1,5 +1,24 @@
-<%@ page import="org.wso2.carbon.dssapi.stub.*" %>
-<%@ page import="org.wso2.carbon.dssapi.core.*" %>
+<!--
+~ Copyright (c) 2005-2014, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+~
+~ WSO2 Inc. licenses this file to you under the Apache License,
+~ Version 2.0 (the "License"); you may not use this file except
+~ in compliance with the License.
+~ You may obtain a copy of the License at
+~
+~    http://www.apache.org/licenses/LICENSE-2.0
+~
+~ Unless required by applicable law or agreed to in writing,
+~ software distributed under the License is distributed on an
+~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~ KIND, either express or implied.  See the License for the
+~ specific language governing permissions and limitations
+~ under the License.
+-->
+
+<%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <%@ page import="org.wso2.carbon.service.mgt.xsd.*" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
 <%@ page import="org.apache.axis2.context.ConfigurationContext" %>
@@ -8,10 +27,12 @@
 <%@ page import="org.wso2.carbon.dssapi.ui.APIPublisherClient" %>
 <%@ page import="org.wso2.carbon.CarbonError" %>
 
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
+
+
+<link href="<c:url value='css/custom.css' />" rel="stylesheet">
 
 <%
+    response.setHeader("Cache-Control", "no-cache");
     APIPublisherClient apiPublisherClient=null;
     int numServices = 0;
     ServiceMetaData[] serviceList=null;
@@ -38,29 +59,32 @@
 <%
     }
 %>
+<carbon:breadcrumb label="api.publisher" resourceBundle="org.wso2.carbon.dssapi.ui.i18n.Resources" topPage="false" request="<%=request%>"/>
 
 <div id="middle">
     <h2>API Publisher Console</h2>
     <div id="workArea">
         <label><%=numServices%> active service(s)</label>
-        <br />
-        <table class="styledLeft" id="moduleTable">
+        <table class="styledLeft" id="servicesTable">
             <thead>
                 <tr>
-                    <th width="30%">Service Name</th>
-                    <th width="30%">Description</th>
-                    <th width="30%">API Availability</th>
+                    <th colspan="5">Services</th>
                 </tr>
             </thead>
             <tbody>
                 <%
                     if(serviceList!=null) {
-                        for(int i=0;i<numServices;i++) {
+                        int position=0;
+                        for(ServiceMetaData service : serviceList) {
+                            String bgColor = ((position % 2) == 1) ? "#EEEFFB" : "white";
+                            position++;
                 %>
-                <tr>
-                    <td width="30%"><% serviceList[i].getName(); %></td>
-                    <td width="30%"><% serviceList[i].getDescription(); %></td>
-                    <td width="30%"><% apiPublisherClient.isAPIAvailable(serviceList[i]); %></td>
+                <tr style="background-color: <%=bgColor%>">
+                    <td><a href="serviceDetails.jsp?serviceName=<%=service.getName()%>" ><%=service.getName()%></a><input type="hidden" name="serviceName" value="<%=service.getName()%>"></td>
+                    <td><%=service.getDescription()%></td>
+                    <td>Deployed on <%=service.getServiceDeployedTime()%></td>
+                    <td>Service up for <%=service.getServiceUpTime()%></td>
+                    <td><%=apiPublisherClient.isAPIAvailable(service)%></td>
                 </tr>
                 <%
                         }
