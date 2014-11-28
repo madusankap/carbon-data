@@ -66,7 +66,7 @@ public class ApiDeployer implements AxisObserver {
         }
     }
 
-    private DataService getDataServiceObject(AxisService axisService) {
+    public DataService getDataServiceObject(AxisService axisService) {
         Parameter parameter = axisService.getParameter(DBConstants.DATA_SERVICE_OBJECT);
         return (DataService) parameter.getValue();
     }
