@@ -39,16 +39,16 @@ public class APIPublisherClient {
     ServiceMetaDataWrapper serviceMetaDataWrapper;
 
     public APIPublisherClient(String cookie, String url, ConfigurationContext configContext) throws AxisFault {
-        String serviceEndpoint="";
+        String serviceEndpoint = "";
         try {
             serviceEndpoint = url + "APIPublisher";
-            stub = new APIPublisherStub(configContext,serviceEndpoint);
+            stub = new APIPublisherStub(configContext, serviceEndpoint);
             ServiceClient client = stub._getServiceClient();
             Options option = client.getOptions();
             option.setManageSession(true);
             option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
 
-        } catch (AxisFault e ) {
+        } catch (AxisFault e) {
             log.error("Error occurred while connecting via stub to : " + serviceEndpoint, e);
             throw e;
 
@@ -56,7 +56,6 @@ public class APIPublisherClient {
     }
 
     /**
-     *
      * @return number of pages
      * @throws RemoteException
      * @throws APIPublisherException
@@ -67,37 +66,33 @@ public class APIPublisherClient {
     }
 
     /**
-     *
      * @return number of active services
      * @throws RemoteException
      * @throws APIPublisherException
      */
     public int getNumberOfActiveServices() throws Exception {
-        return stub.listDssServices("",0).getNumberOfActiveServices();
+        return stub.listDssServices("", 0).getNumberOfActiveServices();
     }
 
     /**
-     *
      * @return number of active services
      * @throws RemoteException
      * @throws APIPublisherException
      */
     public int getNumberOfServices() throws Exception {
-        return stub.listDssServices("",0).getServices().length;
+        return stub.listDssServices("", 0).getServices().length;
     }
 
     /**
-     *
      * @return all the services
      * @throws RemoteException
      * @throws APIPublisherException
      */
     public ServiceMetaData[] getServices() throws RemoteException, APIPublisherException {
-        return stub.listDssServices("",0).getServices();
+        return stub.listDssServices("", 0).getServices();
     }
 
     /**
-     *
      * @param serviceMetaData
      * @return api availability of the given service
      * @throws RemoteException
@@ -108,7 +103,6 @@ public class APIPublisherClient {
 
 
     /**
-     *
      * @param serviceMetaData
      * @return status of the operation
      * @throws RemoteException
@@ -120,7 +114,6 @@ public class APIPublisherClient {
     }
 
     /**
-     *
      * @param serviceMetaData
      * @return status of the operation
      * @throws RemoteException
@@ -128,5 +121,20 @@ public class APIPublisherClient {
     public boolean unpublishAPI(ServiceMetaData serviceMetaData) throws RemoteException {
         String serviceId = serviceMetaData.getName().toString();
         return stub.removeApi(serviceId);
+    }
+
+
+    /**
+     * @param serviceMetaData
+     * @return number of faulty service groups
+     * @throws RemoteException
+     * @throws APIPublisherException
+     */
+    public int getNumofFaultyServices(ServiceMetaData serviceMetaData) throws RemoteException, APIPublisherException {
+        return stub.listDssServices("", 0).getNumberOfFaultyServiceGroups();
+    }
+
+    public ServiceMetaDataWrapper getServiceData(String serviceName) throws RemoteException, APIPublisherException {
+        return stub.listDssServices(serviceName,0);
     }
 }
