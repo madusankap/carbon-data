@@ -72,7 +72,7 @@ public class APIUtil {
             } catch (APIManagementException e) {
                 e.printStackTrace();
             }
-            String apiContext = "/" + apiName;
+            String apiContext = "/services/" + apiName;
             API api = createAPIModel(apiProvider, apiContext, apiEndpoint, authType, identifier);
 
             if (api != null) {
@@ -96,7 +96,7 @@ public class APIUtil {
             api.setUriTemplates(getURITemplates(apiEndpoint, authType));
             api.setVisibility(APIConstants.API_GLOBAL_VISIBILITY);
             api.addAvailableTiers(apiProvider.getTiers());
-            api.setEndpointSecured(true);
+            api.setEndpointSecured(false);
             api.setStatus(APIStatus.PUBLISHED);
             api.setTransports(Constants.TRANSPORT_HTTP + "," + Constants.TRANSPORT_HTTPS);
             api.setSubscriptionAvailability(APIConstants.SUBSCRIPTION_TO_ALL_TENANTS);
