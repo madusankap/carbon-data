@@ -120,14 +120,11 @@
 
                     <td width="12px">&nbsp;</td>
 
-                    <td width="50%">
-                        <table class="styledLeft" id="apiOperationsTable" style="margin-left: 0px;" width="100%">
-                            <thead>
-                            <tr>
-                                <th colspan="2" align="left"><fmt:message key="api.operations"/></th>
-                            </tr>
-                            </thead>
-                        </table>
+                    <td width="50%" id="publishStateTable">
+                        <div >
+                            <%@ include file="publishState.jsp" %>
+                        </div>
+
                     </td>
 
                 </tr>
