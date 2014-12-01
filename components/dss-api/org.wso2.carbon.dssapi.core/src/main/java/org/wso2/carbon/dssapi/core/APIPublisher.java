@@ -21,7 +21,7 @@ package org.wso2.carbon.dssapi.core;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.wso2.carbon.context.CarbonContext;
+import org.apache.axis2.AxisFault;
 import org.wso2.carbon.dataservices.common.DBConstants;
 import org.wso2.carbon.dataservices.core.admin.DataServiceAdmin;
 import org.wso2.carbon.dataservices.ui.beans.Data;
@@ -52,9 +52,7 @@ public class APIPublisher {
      * @return availability of api to DataServices
      */
     public boolean apiAvailable(String ServiceName) {
-        String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-        String username = CarbonContext.getThreadLocalCarbonContext().getUsername();
-        return new APIUtil().apiAvailable(ServiceName, username, tenantDomain);
+        return new APIUtil().apiAvailable(ServiceName);
     }
 
     /**
@@ -73,9 +71,6 @@ public class APIPublisher {
             data.populate(configElement);
             data.setManagedApi(true);
             new DataServiceAdmin().saveDataService(serviceId, "", data.buildXML().toString());
-            String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-            String username = CarbonContext.getThreadLocalCarbonContext().getUsername();
-            new APIUtil().addApi(serviceId, username, tenantDomain);
             Status = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,9 +95,6 @@ public class APIPublisher {
             data.populate(configElement);
             data.setManagedApi(false);
             new DataServiceAdmin().saveDataService(serviceId, "", data.buildXML().toString());
-            String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
-            String username = CarbonContext.getThreadLocalCarbonContext().getUsername();
-            new APIUtil().removeApi(serviceId, username, tenantDomain);
             Status = true;
         } catch (Exception e) {
             e.printStackTrace();
