@@ -25,9 +25,9 @@
             This service will help to create/modify a data service api.
         </description>
         <parameter name="ServiceClass">org.wso2.carbon.dssapi.core.APIPublisher</parameter>
-        <parameter name="enableMTOM" locked="false">false</parameter>
+		<parameter name="enableMTOM" locked="false">false</parameter>        
     </service>
-
+	        
     <parameter name="AuthorizationAction" locked="true">/permission/admin/configure/dataservices</parameter>
     <parameter name="adminService" locked="true">true</parameter>
     <parameter name="hiddenService" locked="true">true</parameter>

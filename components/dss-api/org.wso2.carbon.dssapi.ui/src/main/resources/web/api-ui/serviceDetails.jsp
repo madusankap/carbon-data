@@ -29,8 +29,10 @@
 <%
     response.setHeader("Cache-Control", "no-cache");
     String serviceName = CharacterEncoder.getSafeText(request.getParameter("serviceName"));
-    request.setAttribute("serviceName", serviceName);
 %>
+<script type="text/javascript">
+    alert("<%=serviceName%>");
+</script>
 <%
 
     String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
@@ -40,13 +42,9 @@
     String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
     APIPublisherClient client;
     ServiceMetaData service;
-    String isAvailable;
     try {
         client = new APIPublisherClient(cookie, backendServerURL, configContext);
         service = client.getServiceData(serviceName).getServices()[0];
-        isAvailable=String.valueOf(client.isAPIAvailable(service));
-        request.setAttribute("isAvailable",isAvailable);
-
     } catch (Exception e) {
         response.setStatus(500);
         CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getMessage(), e);
@@ -79,27 +77,27 @@
                             </tr>
                             </thead>
                             <tr>
-                                <td width="30%"><fmt:message key="service.name"/></td>
+                                <td width="30%">Service Name</td>
                                 <td><%=service.getName()%>
                                 </td>
                             </tr>
-                            <tr style="background-color: #EEEFFB">
-                                <td><fmt:message key="service.description"/></td>
+                            <tr>
+                                <td>Description</td>
                                 <td><%=service.getDescription()%>
                                 </td>
                             </tr>
                             <tr>
-                                <td><fmt:message key="service.group"/></td>
+                                <td>Service Group</td>
                                 <td><%=service.getServiceGroupName()%>
                                 </td>
                             </tr>
-                            <tr style="background-color: #EEEFFB">
-                                <td><fmt:message key="service.scope"/></td>
+                            <tr>
+                                <td>Service Scope</td>
                                 <td><%=service.getScope()%>
                                 </td>
                             </tr>
                             <tr>
-                                <td><fmt:message key="service.type"/></td>
+                                <td>Service Type</td>
                                 <td>
                                     <%=service.getServiceType()%>&nbsp;&nbsp;&nbsp;
                                     <img src="../<%= service.getServiceType()%>/images/type.gif"
@@ -107,13 +105,13 @@
                                          alt="<%= service.getServiceType()%>"/>
                                 </td>
                             </tr>
-                            <tr style="background-color: #EEEFFB">
-                                <td><fmt:message key="service.deploy.time"/></td>
+                            <tr>
+                                <td>Deployed Time</td>
                                 <td><%=service.getServiceDeployedTime()%>
                                 </td>
                             </tr>
                             <tr>
-                                <td><fmt:message key="service.up.time"/></td>
+                                <td>Service up time</td>
                                 <td><%=service.getServiceUpTime()%>
                                 </td>
                             </tr>
@@ -122,24 +120,14 @@
 
                     <td width="12px">&nbsp;</td>
 
-                    <script type="text/javascript">
-                        jQuery.noConflict();
-                        function changeState(active) {
-                            var url = 'changeState.jsp?serviceName=<%=serviceName%>&isActive=' + active;
-                            alert(url);
-                            jQuery("#publishStateTable").load(url, null, function (responseText, status, XMLHttpRequest) {
-                                if (status != "success") {
-                                    CARBON.showErrorDialog('<fmt:message key="could.not.change.service.state"/>');
-                                }
-                            });
-                        }
-                    </script>
-
-                    <td width="50%" id="publishStateTable">
-                        <div >
-                            <%@ include file="publishState.jsp" %>
-                        </div>
-
+                    <td width="50%">
+                        <table class="styledLeft" id="apiOperationsTable" style="margin-left: 0px;" width="100%">
+                            <thead>
+                            <tr>
+                                <th colspan="2" align="left"><fmt:message key="api.operations"/></th>
+                            </tr>
+                            </thead>
+                        </table>
                     </td>
 
                 </tr>
