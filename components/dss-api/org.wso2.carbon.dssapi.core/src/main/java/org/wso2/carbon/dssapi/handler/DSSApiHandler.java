@@ -18,17 +18,12 @@
 
 package org.wso2.carbon.dssapi.handler;
 
-import java.util.Enumeration;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.apimgt.api.APIManagementException;
@@ -43,15 +38,17 @@ import org.wso2.carbon.apimgt.interceptor.UsageStatConfiguration;
 import org.wso2.carbon.apimgt.interceptor.utils.APIManagerInterceptorConstant;
 import org.wso2.carbon.apimgt.interceptor.utils.APIManagetInterceptorUtils;
 import org.wso2.carbon.apimgt.interceptor.valve.APIFaultException;
+import org.wso2.carbon.dataservices.common.DBConstants;
 import org.wso2.carbon.dataservices.core.engine.DataService;
-import org.wso2.carbon.dssapi.deployers.ApiDeployer;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 
 /**
  * Axis2 handler to intercept all incoming requests for axis services and do
  * APIManagement. The required services should have a service level parameter
  * defined in it.
  * <parameter name="apiService" locked="true">true</parameter>
- *
  */
 public class DSSApiHandler extends AbstractHandler {
 
@@ -68,12 +65,15 @@ public class DSSApiHandler extends AbstractHandler {
             }
 
             if (apiService) {
-                HttpServletRequest request =  (HttpServletRequest) msgContext.getProperty(APIManagerInterceptorConstant.HTTP_SERVLET_REQUEST);
+                HttpServletRequest request = (HttpServletRequest) msgContext.getProperty(APIManagerInterceptorConstant.HTTP_SERVLET_REQUEST);
 
                 if (request != null) {
-                    String [] splitStrings= request.getRequestURI().split("/");
-                    String context ="/"+ splitStrings[1]+"/"+splitStrings[2];
-
+                    String[] splitStrings = request.getRequestURI().split("/");
+                    String context = "";
+                    for (int i = 1; i < (splitStrings.length - 1); i++) {
+                        context += "/" + splitStrings[i];
+                    }
+                    context = context.trim();
                     if (context == null || context.equals("")) {
                         return InvocationResponse.CONTINUE;
                     }
@@ -114,29 +114,28 @@ public class DSSApiHandler extends AbstractHandler {
 
                         try {
                             if (bearerToken != null) {
-                                accessToken =  APIManagetInterceptorUtils.getBearerToken(bearerToken);
+                                accessToken = APIManagetInterceptorUtils.getBearerToken(bearerToken);
                             } else {
                                 // There can be some API published with None Auth Type
-								/* throw new APIFaultException(APIConstants.KeyValidationStatus
+                                /* throw new APIFaultException(APIConstants.KeyValidationStatus
 								 * .API_AUTH_INVALID_CREDENTIALS, "Invalid format for Authorization header. Expected 'Bearer <token>'"
 								 * );
 								 */
                             }
                             APITokenAuthenticator authenticator = new APITokenAuthenticator();
 
-                            String apiVersion = splitStrings[3];
+                            String apiVersion = splitStrings[splitStrings.length - 1];
                             String domain = request.getHeader(APITokenValidator.getAPIManagerClientDomainHeader());
                             String authLevel = authenticator.getResourceAuthenticationScheme(context,
                                     apiVersion,
                                     request.getRequestURI(),
                                     request.getMethod());
-                            if(authLevel == APIConstants.NO_MATCHING_AUTH_SCHEME){
+                            if (authLevel == APIConstants.NO_MATCHING_AUTH_SCHEME) {
                                 APIManagetInterceptorUtils.handleNoMatchAuthSchemeCallForAxisservice(msgContext,
                                         request.getMethod(), request.getRequestURI(), apiVersion, context);
                                 return InvocationResponse.ABORT;
-                            }
-                            else{
-                                interceptorOps.doAuthenticate(context, apiVersion,accessToken, authLevel,domain);
+                            } else {
+                                interceptorOps.doAuthenticate(context, apiVersion, accessToken, authLevel, domain);
                             }
                         } catch (APIManagementException e) {
                             // ignore
@@ -157,7 +156,7 @@ public class DSSApiHandler extends AbstractHandler {
                         if (statConfiguration.isStatsPublishingEnabled()) {
                             try {
                                 interceptorOps.publishStatistics(request, requestTime, false);
-                            }catch (APIManagementException e) {
+                            } catch (APIManagementException e) {
                                 log.error("Error occured when publishing stats", e);
                             }
                         }
@@ -173,7 +172,7 @@ public class DSSApiHandler extends AbstractHandler {
      * authenticate/throttle the request.
      *
      * @param request
-    * @param context
+     * @param context
      * @return wsdl
      */
     private InvocationResponse handleWSDLGetRequest(HttpServletRequest request, String context) {
@@ -193,4 +192,8 @@ public class DSSApiHandler extends AbstractHandler {
         return null;
     }
 
+    public DataService getDataServiceObject(AxisService axisService) {
+        Parameter parameter = axisService.getParameter(DBConstants.DATA_SERVICE_OBJECT);
+        return (DataService) parameter.getValue();
+    }
 }

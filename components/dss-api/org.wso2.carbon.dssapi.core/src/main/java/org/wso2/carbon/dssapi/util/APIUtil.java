@@ -39,7 +39,7 @@ public class APIUtil {
 
     private APIProvider getAPIProvider(String username) {
         try {
-            return APIManagerFactory.getInstance().getAPIProvider("admin");
+            return APIManagerFactory.getInstance().getAPIProvider(username);
         } catch (APIManagementException e) {
             e.printStackTrace();
         }
@@ -51,15 +51,27 @@ public class APIUtil {
                 .getAPIManagerConfigurationService() != null;
     }
 
-    public void addApi(String ServiceId) {
-
+    public void addApi(String ServiceId, String username, String tenantName) {
         if (isAPIProviderReady()) {
-            //String username= CarbonContext.getThreadLocalCarbonContext().getUsername();
-            APIProvider apiProvider = getAPIProvider("admin");
-            String provider = "admin"; //todo get correct provider(username) for tenants
+            String providerName;
+            String apiEndpoint;
+            String apiContext;
+            APIProvider apiProvider;
+            if ("carbon.super".equals(tenantName)) {
+                providerName = username;
+                apiEndpoint = "http://" + System.getProperty(HOST_NAME) + ":" + System.getProperty(HTTP_PORT) + "/services/" + ServiceId + "?wsdl";
+                apiContext = "/services/" + ServiceId;
+                apiProvider = getAPIProvider(providerName);
+            } else {
+                providerName = username + "-AT-" + tenantName;
+                apiEndpoint = "http://" + System.getProperty(HOST_NAME) + ":" + System.getProperty(HTTP_PORT) + "/services/t/" + tenantName + "/" + ServiceId + "?wsdl";
+                apiContext = "/services/t/" + tenantName + "/" + ServiceId;
+                apiProvider = getAPIProvider(username + "@" + tenantName);
+            }
+
+            String provider = providerName; //todo get correct provider(username) for tenants
             String apiVersion = "1.0.0";
             String apiName = ServiceId;
-            String apiEndpoint = "http://" + System.getProperty(HOST_NAME) + ":" + System.getProperty(HTTP_PORT) + "/services/" + apiName + "?wsdl";
             String iconPath;
             String documentURL;
             String authType = "Any";
@@ -72,7 +84,6 @@ public class APIUtil {
             } catch (APIManagementException e) {
                 e.printStackTrace();
             }
-            String apiContext = "/services/" + apiName;
             API api = createAPIModel(apiProvider, apiContext, apiEndpoint, authType, identifier);
 
             if (api != null) {
@@ -143,33 +154,43 @@ public class APIUtil {
         return uriTemplates;
     }
 
-    public boolean apiAvailable(String ServiceId) {
+    public boolean apiAvailable(String ServiceId, String username, String tenantDomain) {
         boolean apiAvailable = false;
         if (isAPIProviderReady()) {
             //String username= CarbonContext.getThreadLocalCarbonContext().getUsername();
-            APIProvider apiProvider = getAPIProvider("admin");
 
-            String provider = "admin";
+            APIProvider apiProvider;
+            String provider;
+            if ("carbon.super".equals(tenantDomain)) {
+                provider = username;
+                apiProvider = getAPIProvider(username);
+            } else {
+                provider = username + "-AT-" + tenantDomain;
+                apiProvider = getAPIProvider(username + "@" + tenantDomain);
+            }
             String apiVersion = "1.0.0";
             String apiName = ServiceId;
             APIIdentifier identifier = new APIIdentifier(provider, apiName, apiVersion);
             try {
                 apiAvailable = apiProvider.isAPIAvailable(identifier);
             } catch (APIManagementException e) {
-
                 e.printStackTrace();
             }
         }
         return apiAvailable;
     }
 
-    public void removeApi(String ServiceId) {
+    public void removeApi(String ServiceId, String username, String tenantDomain) {
         if (isAPIProviderReady()) {
-            //  String username= CarbonContext.getThreadLocalCarbonContext().getUsername();
-            APIProvider apiProvider = getAPIProvider("admin");
-
-            String provider = "admin"; //todo get correct provider(username) for tenants
-
+            APIProvider apiProvider;
+            String provider;
+            if ("carbon.super".equals(tenantDomain)) {
+                provider = username;
+                apiProvider = getAPIProvider(username);
+            } else {
+                provider = username + "-AT-" + tenantDomain;
+                apiProvider = getAPIProvider(username + "@" + tenantDomain);
+            }
             String apiVersion = "1.0.0";
 
             String apiName = ServiceId;
