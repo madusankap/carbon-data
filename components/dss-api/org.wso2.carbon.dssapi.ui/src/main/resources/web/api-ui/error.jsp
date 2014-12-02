@@ -6,18 +6,18 @@
 ~ in compliance with the License.
 ~ You may obtain a copy of the License at
 ~
-~    http://www.apache.org/licenses/LICENSE-2.0
+~ http://www.apache.org/licenses/LICENSE-2.0
 ~
 ~ Unless required by applicable law or agreed to in writing,
 ~ software distributed under the License is distributed on an
 ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~ KIND, either express or implied.  See the License for the
+~ KIND, either express or implied. See the License for the
 ~ specific language governing permissions and limitations
 ~ under the License.
 -->
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar"
-           prefix="carbon"%>
+           prefix="carbon" %>
 
 <%
     String message = request.getParameter("errorMsg");
@@ -27,21 +27,23 @@
             label="dataservice.xml.editor"
             resourceBundle="org.wso2.carbon.dssapi.ui.i18n.Resources"
             topPage="false"
-            request="<%=request%>" />
+            request="<%=request%>"/>
     <div id="workArea">
         <form>
-            <tr><td>
-                <textarea id ="dsConfig" name="dsConfig"
-                          style="background-color:lavender; width:99%;height:70px;*height:500px;
+            <tr>
+                <td>
+                    <textarea id="dsConfig" name="dsConfig"
+                              style="background-color:lavender; width:99%;height:70px;*height:500px;
                       font-family:verdana;
                       font-size:15px;
                       color: red;
                       border:solid 1px #9fc2d5;
                       overflow-x:auto;
                       overflow-y:auto"><fmt:message>(<%=message%>)</fmt:message>
-                </textarea>
+                    </textarea>
 
-            </td></tr>
+                </td>
+            </tr>
         </form>
     </div>
 </fmt:bundle>

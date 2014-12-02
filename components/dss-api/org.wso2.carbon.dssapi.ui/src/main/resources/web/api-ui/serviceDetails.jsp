@@ -6,25 +6,25 @@
 ~ in compliance with the License.
 ~ You may obtain a copy of the License at
 ~
-~    http://www.apache.org/licenses/LICENSE-2.0
+~ http://www.apache.org/licenses/LICENSE-2.0
 ~
 ~ Unless required by applicable law or agreed to in writing,
 ~ software distributed under the License is distributed on an
 ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~ KIND, either express or implied.  See the License for the
+~ KIND, either express or implied. See the License for the
 ~ specific language governing permissions and limitations
 ~ under the License.
 -->
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
-<%@ page import="org.wso2.carbon.ui.util.CharacterEncoder" %>
-<%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
 <%@ page import="org.apache.axis2.context.ConfigurationContext" %>
 <%@ page import="org.wso2.carbon.CarbonConstants" %>
-<%@ page import="org.wso2.carbon.utils.ServerConstants" %>
-<%@ page import="org.wso2.carbon.service.mgt.xsd.ServiceMetaData" %>
 <%@ page import="org.wso2.carbon.dssapi.ui.APIPublisherClient" %>
+<%@ page import="org.wso2.carbon.service.mgt.xsd.ServiceMetaData" %>
 <%@ page import="org.wso2.carbon.ui.CarbonUIMessage" %>
+<%@ page import="org.wso2.carbon.ui.CarbonUIUtil" %>
+<%@ page import="org.wso2.carbon.ui.util.CharacterEncoder" %>
+<%@ page import="org.wso2.carbon.utils.ServerConstants" %>
 
 <%
     response.setHeader("Cache-Control", "no-cache");
@@ -44,7 +44,7 @@
         service = client.getServiceData(serviceName).getServices()[0];
 
         boolean APIAvailability = client.isAPIAvailable(service);
-        request.setAttribute("APIAvailability",APIAvailability);
+        request.setAttribute("APIAvailability", APIAvailability);
     } catch (Exception e) {
         response.setStatus(500);
         CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getMessage(), e);
@@ -59,7 +59,8 @@
 %>
 
 <fmt:bundle basename="org.wso2.carbon.dssapi.ui.i18n.Resources">
-    <carbon:breadcrumb label="api.dashboard" resourceBundle="org.wso2.carbon.dssapi.ui.i18n.Resources" topPage="false" request="<%=request%>"/>
+    <carbon:breadcrumb label="api.dashboard" resourceBundle="org.wso2.carbon.dssapi.ui.i18n.Resources" topPage="false"
+                       request="<%=request%>"/>
     <div id="middle">
         <h2><fmt:message key="api.dashboard"/> (<%= serviceName %>)</h2>
 
@@ -133,9 +134,9 @@
                         function changeState(active) {
                             var url = 'changeState.jsp?serviceName=<%=serviceName%>&isPublishRequest=' + active;
                             jQuery.ajax({
-                                url : url,
+                                url: url,
                                 type: "GET",
-                                success: function(){
+                                success: function () {
                                     alert("Please wait..!! Reload the page after a few seconds. ");
                                     location.reload(true);
                                 }

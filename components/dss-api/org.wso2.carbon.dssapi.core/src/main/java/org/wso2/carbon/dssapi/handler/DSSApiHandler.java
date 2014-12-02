@@ -54,6 +54,12 @@ public class DSSApiHandler extends AbstractHandler {
 
     private static final Log log = LogFactory.getLog(DSSApiHandler.class);
 
+    /**
+     * To handle the API request
+     * @param msgContext message context
+     * @return the response
+     * @throws AxisFault
+     */
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         boolean apiService = false;
         AxisService axisService = msgContext.getAxisService();
@@ -118,7 +124,7 @@ public class DSSApiHandler extends AbstractHandler {
                             } else {
                                 // There can be some API published with None Auth Type
                                 /* throw new APIFaultException(APIConstants.KeyValidationStatus
-								 * .API_AUTH_INVALID_CREDENTIALS, "Invalid format for Authorization header. Expected 'Bearer <token>'"
+                                 * .API_AUTH_INVALID_CREDENTIALS, "Invalid format for Authorization header. Expected 'Bearer <token>'"
 								 * );
 								 */
                             }
@@ -171,8 +177,8 @@ public class DSSApiHandler extends AbstractHandler {
      * When we do GET call for WSDL/WADL, we do not want to
      * authenticate/throttle the request.
      *
-     * @param request
-     * @param context
+     * @param request servlet request
+     * @param context context
      * @return wsdl
      */
     private InvocationResponse handleWSDLGetRequest(HttpServletRequest request, String context) {
@@ -192,6 +198,11 @@ public class DSSApiHandler extends AbstractHandler {
         return null;
     }
 
+    /**
+     * To get the data service object
+     * @param axisService axis service to get dss object
+     * @return data service object of a given axis service
+     */
     public DataService getDataServiceObject(AxisService axisService) {
         Parameter parameter = axisService.getParameter(DBConstants.DATA_SERVICE_OBJECT);
         return (DataService) parameter.getValue();

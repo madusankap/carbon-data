@@ -32,23 +32,28 @@ import org.wso2.carbon.service.mgt.ServiceMetaDataWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-
+/**
+ * To handle the API operations
+ */
 public class APIPublisher {
+
     /**
-     * @param searchString
-     * @param pageNumber
+     * To list DSS services
+     *
+     * @param searchString name of the service or part os a name
+     * @param pageNumber   page number
      * @return List of Data Services
      * @throws Exception
      */
-
     public ServiceMetaDataWrapper listDssServices(String searchString, int pageNumber) throws Exception {
 
         return new ServiceAdmin().listServices(DBConstants.DB_SERVICE_TYPE, searchString, pageNumber);
-
     }
 
     /**
-     * @param ServiceName
+     * To check whether API is available for the given service or not
+     *
+     * @param ServiceName name of the service
      * @return availability of api to DataServices
      */
     public boolean apiAvailable(String ServiceName) {
@@ -58,7 +63,9 @@ public class APIPublisher {
     }
 
     /**
-     * @param serviceId
+     * To add an API for a service
+     *
+     * @param serviceId service id of the service
      * @throws Exception
      */
     public boolean AddApi(String serviceId) {
@@ -85,7 +92,9 @@ public class APIPublisher {
     }
 
     /**
-     * @param serviceId
+     * To remove the API
+     *
+     * @param serviceId service id of the service
      * @return api is removed from api manager
      */
     public boolean removeApi(String serviceId) {
