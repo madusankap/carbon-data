@@ -34,7 +34,7 @@ import java.rmi.RemoteException;
 
 public class APIPublisherClient {
 
-    private static Log log = LogFactory.getLog(APIPublisherClient.class);
+   // private static Log log = LogFactory.getLog(APIPublisherClient.class);
     APIPublisherStub stub;
     ServiceMetaDataWrapper serviceMetaDataWrapper;
 
@@ -49,7 +49,7 @@ public class APIPublisherClient {
             option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
 
         } catch (AxisFault e) {
-            log.error("Error occurred while connecting via stub to : " + serviceEndpoint, e);
+           // log.error("Error occurred while connecting via stub to : " + serviceEndpoint, e);
             throw e;
 
         }
