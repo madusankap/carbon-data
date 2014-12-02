@@ -37,6 +37,12 @@ public class APIUtil {
     private static final String HTTP_PORT = "mgt.transport.http.port";
     private static final String HOST_NAME = "carbon.local.ip";
 
+    /**
+     * To get the API provider
+     *
+     * @param username username of the logged user
+     * @return
+     */
     private APIProvider getAPIProvider(String username) {
         try {
             return APIManagerFactory.getInstance().getAPIProvider(username);
@@ -46,11 +52,23 @@ public class APIUtil {
         return null;
     }
 
+    /**
+     * To check whether API provider is ready
+     *
+     * @return API provider config service
+     */
     private boolean isAPIProviderReady() {
         return ServiceReferenceHolder.getInstance()
                 .getAPIManagerConfigurationService() != null;
     }
 
+    /**
+     * To add an API
+     *
+     * @param ServiceId  service name of the service
+     * @param username   username of the logged user
+     * @param tenantName tenant of the logged user
+     */
     public void addApi(String ServiceId, String username, String tenantName) {
         if (isAPIProviderReady()) {
             String providerName;
@@ -99,6 +117,16 @@ public class APIUtil {
 
     }
 
+    /**
+     * To create the model of the API
+     *
+     * @param apiProvider API Provider
+     * @param apiContext  API Context
+     * @param apiEndpoint Endpoint url
+     * @param authType    Authentication type
+     * @param identifier  API identifier
+     * @return API model
+     */
     private API createAPIModel(APIProvider apiProvider, String apiContext, String apiEndpoint, String authType, APIIdentifier identifier) {
         API api = null;
         try {
@@ -122,6 +150,13 @@ public class APIUtil {
         return api;
     }
 
+    /**
+     * To get URI templates
+     *
+     * @param endpoint Endpoint URL
+     * @param authType Authentication type
+     * @return URI templates
+     */
     private Set<URITemplate> getURITemplates(String endpoint, String authType) {
         //todo improve to add sub context paths for uri templates as well
         Set<URITemplate> uriTemplates = new LinkedHashSet<URITemplate>();
@@ -154,6 +189,14 @@ public class APIUtil {
         return uriTemplates;
     }
 
+    /**
+     * To make sure that the API is available for given service and to the given user of a given tenant
+     *
+     * @param ServiceId    service name of the service
+     * @param username     username of the logged user
+     * @param tenantDomain tenant domain
+     * @return availability of the API
+     */
     public boolean apiAvailable(String ServiceId, String username, String tenantDomain) {
         boolean apiAvailable = false;
         if (isAPIProviderReady()) {
@@ -180,6 +223,13 @@ public class APIUtil {
         return apiAvailable;
     }
 
+    /**
+     * To remove API availability form a given user in the given tenant domain
+     *
+     * @param ServiceId    service name of the service
+     * @param username     username of the logged user
+     * @param tenantDomain tenant domain
+     */
     public void removeApi(String ServiceId, String username, String tenantDomain) {
         if (isAPIProviderReady()) {
             APIProvider apiProvider;

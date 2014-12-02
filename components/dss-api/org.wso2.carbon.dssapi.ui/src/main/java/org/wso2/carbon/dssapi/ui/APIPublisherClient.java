@@ -23,8 +23,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.dssapi.stub.APIPublisherException;
 import org.wso2.carbon.dssapi.stub.APIPublisherStub;
 import org.wso2.carbon.service.mgt.xsd.ServiceMetaData;
@@ -32,9 +30,12 @@ import org.wso2.carbon.service.mgt.xsd.ServiceMetaDataWrapper;
 
 import java.rmi.RemoteException;
 
+/**
+ * API publisher client to talk to stub
+ */
 public class APIPublisherClient {
 
-   // private static Log log = LogFactory.getLog(APIPublisherClient.class);
+    //private static Log log = LogFactory.getLog(APIPublisherClient.class);
     APIPublisherStub stub;
     ServiceMetaDataWrapper serviceMetaDataWrapper;
 
@@ -49,13 +50,15 @@ public class APIPublisherClient {
             option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
 
         } catch (AxisFault e) {
-           // log.error("Error occurred while connecting via stub to : " + serviceEndpoint, e);
+            //log.error("Error occurred while connecting via stub to : " + serviceEndpoint, e);
             throw e;
 
         }
     }
 
     /**
+     * To get number of pages to display
+     *
      * @return number of pages
      * @throws RemoteException
      * @throws APIPublisherException
@@ -66,6 +69,8 @@ public class APIPublisherClient {
     }
 
     /**
+     * To get number of active services
+     *
      * @return number of active services
      * @throws RemoteException
      * @throws APIPublisherException
@@ -75,7 +80,9 @@ public class APIPublisherClient {
     }
 
     /**
-     * @return number of active services
+     * To get number of services for API operations
+     *
+     * @return number of services for API operations
      * @throws RemoteException
      * @throws APIPublisherException
      */
@@ -84,6 +91,8 @@ public class APIPublisherClient {
     }
 
     /**
+     * To get all available services
+     *
      * @return all the services
      * @throws RemoteException
      * @throws APIPublisherException
@@ -93,39 +102,47 @@ public class APIPublisherClient {
     }
 
     /**
-     * @param serviceMetaData
+     * To check whether an API is available for the given service
+     *
+     * @param serviceMetaData service details
      * @return api availability of the given service
      * @throws RemoteException
      */
     public boolean isAPIAvailable(ServiceMetaData serviceMetaData) throws RemoteException {
-        return stub.apiAvailable(serviceMetaData.getName().toString());
+        return stub.apiAvailable(serviceMetaData.getName());
     }
 
 
     /**
-     * @param serviceMetaData
+     * To publish API for a given service
+     *
+     * @param serviceMetaData service details
      * @return status of the operation
      * @throws RemoteException
      * @throws APIPublisherException
      */
     public boolean publishAPI(ServiceMetaData serviceMetaData) throws RemoteException, APIPublisherException {
-        String serviceId = serviceMetaData.getName().toString();
+        String serviceId = serviceMetaData.getName();
         return stub.addApi(serviceId);
     }
 
     /**
-     * @param serviceMetaData
+     * To un-publish API for a given service
+     *
+     * @param serviceMetaData service details
      * @return status of the operation
      * @throws RemoteException
      */
     public boolean unpublishAPI(ServiceMetaData serviceMetaData) throws RemoteException {
-        String serviceId = serviceMetaData.getName().toString();
+        String serviceId = serviceMetaData.getName();
         return stub.removeApi(serviceId);
     }
 
 
     /**
-     * @param serviceMetaData
+     * To get number of faulty services
+     *
+     * @param serviceMetaData service details
      * @return number of faulty service groups
      * @throws RemoteException
      * @throws APIPublisherException
@@ -134,7 +151,15 @@ public class APIPublisherClient {
         return stub.listDssServices("", 0).getNumberOfFaultyServiceGroups();
     }
 
+    /**
+     * To get the service details by service name
+     *
+     * @param serviceName name os the service
+     * @return service details
+     * @throws RemoteException
+     * @throws APIPublisherException
+     */
     public ServiceMetaDataWrapper getServiceData(String serviceName) throws RemoteException, APIPublisherException {
-        return stub.listDssServices(serviceName,0);
+        return stub.listDssServices(serviceName, 0);
     }
 }
