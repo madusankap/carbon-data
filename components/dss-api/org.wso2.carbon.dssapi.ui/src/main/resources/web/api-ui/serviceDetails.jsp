@@ -30,9 +30,6 @@
     response.setHeader("Cache-Control", "no-cache");
     String serviceName = CharacterEncoder.getSafeText(request.getParameter("serviceName"));
 %>
-<script type="text/javascript">
-    alert("<%=serviceName%>");
-</script>
 <%
 
     String backendServerURL = CarbonUIUtil.getServerURL(config.getServletContext(), session);
@@ -45,6 +42,9 @@
     try {
         client = new APIPublisherClient(cookie, backendServerURL, configContext);
         service = client.getServiceData(serviceName).getServices()[0];
+
+        boolean APIAvailability = client.isAPIAvailable(service);
+        request.setAttribute("APIAvailability",APIAvailability);
     } catch (Exception e) {
         response.setStatus(500);
         CarbonUIMessage uiMsg = new CarbonUIMessage(CarbonUIMessage.ERROR, e.getMessage(), e);
@@ -120,12 +120,32 @@
 
                     <td width="12px">&nbsp;</td>
 
-                    <td width="50%" id="publishStateTable">
-                        <div >
-                            <%@ include file="publishState.jsp" %>
-                        </div>
-
+                    <td width="50%">
+                        <nobr>
+                            <div id="publishStateDiv">
+                                <%@ include file="publishState.jsp" %>
+                            </div>
+                        </nobr>
                     </td>
+
+                    <script type="text/javascript">
+                        jQuery.noConflict();
+                        function changeState(active) {
+                            var url = 'changeState.jsp?serviceName=<%=serviceName%>&isPublishRequest=' + active;
+                            jQuery.ajax({
+                                url : url,
+                                type: "GET",
+                                success: function(){
+                                    alert("Please wait..!! Reload the page after a few seconds. ");
+                                    location.reload(true);
+                                }
+                            });
+
+
+                            //alert(url);
+                            //jQuery("#publishStateDiv").load(url, null, null );
+                        }
+                    </script>
 
                 </tr>
             </table>
