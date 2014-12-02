@@ -1,5 +1,9 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <fmt:bundle basename="org.wso2.carbon.dssapi.ui.i18n.Resources">
+
+<%
+    boolean APIAvailability = Boolean.valueOf(request.getAttribute("APIAvailability").toString());
+%>
     <table class="styledLeft" id="apiOperationsTable" style="margin-left: 0px;" width="100%">
         <thead>
         <tr>
@@ -9,7 +13,7 @@
         <tr>
             <td><fmt:message key="api.availability"/></td>
             <%
-                if (Boolean.valueOf((String) request.getAttribute("isAvailable"))) {
+                if (APIAvailability) {
             %>
             <td style="background:url(./images/activate.gif) no-repeat left center"> &nbsp;&nbsp;&nbsp;API is Available [ <a href="#" onclick="changeState(false);return false;">Unpublish API</a> ]
             </td>
