@@ -82,7 +82,7 @@ public class APIPublisher {
             new DataServiceAdmin().saveDataService(serviceId, "", data.buildXML().toString());
             String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
             String username = CarbonContext.getThreadLocalCarbonContext().getUsername();
-            new APIUtil().addApi(serviceId, username, tenantDomain);
+            new APIUtil().addApi(serviceId, username, tenantDomain,data);
             Status = true;
         } catch (Exception e) {
             e.printStackTrace();

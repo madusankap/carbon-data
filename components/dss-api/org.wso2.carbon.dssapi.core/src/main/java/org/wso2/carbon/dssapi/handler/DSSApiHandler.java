@@ -42,6 +42,7 @@ import org.wso2.carbon.dataservices.common.DBConstants;
 import org.wso2.carbon.dataservices.core.engine.DataService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import java.util.Enumeration;
 
 /**
@@ -76,7 +77,7 @@ public class DSSApiHandler extends AbstractHandler {
                 if (request != null) {
                     String[] splitStrings = request.getRequestURI().split("/");
                     String context = "";
-                    for (int i = 1; i < (splitStrings.length - 1); i++) {
+                    for (int i = 1; i < (splitStrings.length - 2); i++) {
                         context += "/" + splitStrings[i];
                     }
                     context = context.trim();
@@ -130,7 +131,7 @@ public class DSSApiHandler extends AbstractHandler {
                             }
                             APITokenAuthenticator authenticator = new APITokenAuthenticator();
 
-                            String apiVersion = splitStrings[splitStrings.length - 1];
+                            String apiVersion = splitStrings[splitStrings.length -2];
                             String domain = request.getHeader(APITokenValidator.getAPIManagerClientDomainHeader());
                             String authLevel = authenticator.getResourceAuthenticationScheme(context,
                                     apiVersion,
