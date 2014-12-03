@@ -29,7 +29,10 @@ import org.wso2.carbon.apimgt.api.model.URITemplate;
 import org.wso2.carbon.apimgt.impl.APIConstants;
 import org.wso2.carbon.apimgt.impl.APIManagerFactory;
 import org.wso2.carbon.apimgt.impl.internal.ServiceReferenceHolder;
+import org.wso2.carbon.dataservices.core.description.operation.Operation;
+import org.wso2.carbon.dataservices.ui.beans.*;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -69,7 +72,7 @@ public class APIUtil {
      * @param username   username of the logged user
      * @param tenantName tenant of the logged user
      */
-    public void addApi(String ServiceId, String username, String tenantName) {
+    public void addApi(String ServiceId, String username, String tenantName,Data data) {
         if (isAPIProviderReady()) {
             String providerName;
             String apiEndpoint;
@@ -102,7 +105,7 @@ public class APIUtil {
             } catch (APIManagementException e) {
                 e.printStackTrace();
             }
-            API api = createAPIModel(apiProvider, apiContext, apiEndpoint, authType, identifier);
+            API api = createAPIModel(apiProvider, apiContext, apiEndpoint, authType, identifier,data);
 
             if (api != null) {
                 try {
@@ -127,12 +130,12 @@ public class APIUtil {
      * @param identifier  API identifier
      * @return API model
      */
-    private API createAPIModel(APIProvider apiProvider, String apiContext, String apiEndpoint, String authType, APIIdentifier identifier) {
+    private API createAPIModel(APIProvider apiProvider, String apiContext, String apiEndpoint, String authType, APIIdentifier identifier,Data data) {
         API api = null;
         try {
             api = new API(identifier);
             api.setContext(apiContext);
-            api.setUriTemplates(getURITemplates(apiEndpoint, authType));
+            api.setUriTemplates(getURITemplates(apiEndpoint, authType,data));
             api.setVisibility(APIConstants.API_GLOBAL_VISIBILITY);
             api.addAvailableTiers(apiProvider.getTiers());
             api.setEndpointSecured(false);
@@ -157,31 +160,27 @@ public class APIUtil {
      * @param authType Authentication type
      * @return URI templates
      */
-    private Set<URITemplate> getURITemplates(String endpoint, String authType) {
+    private Set<URITemplate> getURITemplates(String endpoint, String authType,Data data) {
         //todo improve to add sub context paths for uri templates as well
         Set<URITemplate> uriTemplates = new LinkedHashSet<URITemplate>();
-        String[] httpVerbs = {"GET", "POST", "PUT", "DELETE", "OPTIONS"};
-
-        if (authType.equals(APIConstants.AUTH_NO_AUTHENTICATION)) {
-            for (int i = 0; i < 5; i++) {
+        ArrayList<org.wso2.carbon.dataservices.ui.beans.Operation> operationsList=data.getOperations();
+           if (authType.equals(APIConstants.AUTH_NO_AUTHENTICATION)) {
+               for (org.wso2.carbon.dataservices.ui.beans.Operation operation:operationsList) {
                 URITemplate template = new URITemplate();
                 template.setAuthType(APIConstants.AUTH_NO_AUTHENTICATION);
-                template.setHTTPVerb(httpVerbs[i]);
+                template.setHTTPVerb("POST");
                 template.setResourceURI(endpoint);
-                template.setUriTemplate("/*");
+                template.setUriTemplate("/"+operation.getName());
                 uriTemplates.add(template);
             }
         } else {
-            for (int i = 0; i < 5; i++) {
+            for (org.wso2.carbon.dataservices.ui.beans.Operation operation:operationsList) {
                 URITemplate template = new URITemplate();
-                if (i != 4) {
-                    template.setAuthType(APIConstants.AUTH_APPLICATION_OR_USER_LEVEL_TOKEN);
-                } else {
-                    template.setAuthType(APIConstants.AUTH_NO_AUTHENTICATION);
-                }
-                template.setHTTPVerb(httpVerbs[i]);
+                template.setAuthType(APIConstants.AUTH_APPLICATION_OR_USER_LEVEL_TOKEN);
+
+                template.setHTTPVerb("POST");
                 template.setResourceURI(endpoint);
-                template.setUriTemplate("/*");
+                template.setUriTemplate("/" + operation.getName());
                 uriTemplates.add(template);
             }
         }
