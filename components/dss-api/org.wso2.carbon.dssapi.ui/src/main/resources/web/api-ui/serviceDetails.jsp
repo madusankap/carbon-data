@@ -137,7 +137,7 @@
                                 url: url,
                                 type: "GET",
                                 success: function () {
-                                    alert("Please wait..!! Reload the page after a few seconds. ");
+                                    alert("API Request sent.!! Reload the page after a few seconds. ");
                                     location.reload(true);
                                 }
                             });

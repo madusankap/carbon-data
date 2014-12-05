@@ -154,7 +154,7 @@ public class APIPublisherClient {
     /**
      * To get the service details by service name
      *
-     * @param serviceName name os the service
+     * @param serviceName name of the service
      * @return service details
      * @throws RemoteException
      * @throws APIPublisherException
