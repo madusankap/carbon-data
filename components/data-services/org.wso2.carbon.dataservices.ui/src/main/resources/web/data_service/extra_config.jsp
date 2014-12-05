@@ -75,13 +75,13 @@
             if (APIAvailability) {
         %>
         <td>
-            <span class="icon-text" style="background:url(./images/activate.gif) no-repeat left center" > <fmt:message key="api.available"/>[ <a href="#" onclick="changeState(false)"><fmt:message key="api.unpublish"/></a> ]</span>
+            <span style="margin-left: 3px"> <input id="apiCheckBox" type="checkbox" checked onclick="changeState()"> <fmt:message key="api.available"/></span>
         </td>
         <%
         } else {
         %>
         <td>
-            <span class="icon-text" style="background:url(./images/deactivate.gif) no-repeat left center"> <fmt:message key="api.unavailable"/> [ <a href="#" onclick="changeState(true)"><fmt:message key="api.publish"/></a> ]</span>
+            <span style="margin-left: 3px"> <input id="apiCheckBox" type="checkbox"  onclick="changeState()">  <fmt:message key="api.unavailable"/></span>
         </td>
         <%
             }
@@ -90,7 +90,15 @@
 
     <script type="text/javascript">
         jQuery.noConflict();
-        function changeState(active) {
+        function changeState() {
+           // alert("changeState");
+            try {
+                var active = document.getElementById("apiCheckBox").checked;
+                //alert(active);
+            } catch(ex) {
+                alert(ex);
+            }
+
             var url = '../api-ui/changeState.jsp?serviceName=<%=serviceName%>&isPublishRequest=' + active;
             jQuery.ajax({
                 url: url,
