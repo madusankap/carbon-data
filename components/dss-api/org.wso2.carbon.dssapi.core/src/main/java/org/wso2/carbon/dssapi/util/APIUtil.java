@@ -30,6 +30,8 @@ import org.wso2.carbon.apimgt.impl.APIConstants;
 import org.wso2.carbon.apimgt.impl.APIManagerFactory;
 import org.wso2.carbon.apimgt.impl.internal.ServiceReferenceHolder;
 import org.wso2.carbon.dataservices.ui.beans.*;
+import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -76,7 +78,7 @@ public class APIUtil {
             String apiEndpoint;
             String apiContext;
             APIProvider apiProvider;
-            if ("carbon.super".equals(tenantName)) {
+            if (MultitenantConstants.SUPER_TENANT_DOMAIN_NAME.equals(tenantName)) {
                 providerName = username;
                 apiEndpoint = "http://" + System.getProperty(HOST_NAME) + ":" + System.getProperty(HTTP_PORT) + "/services/" + ServiceId + "?wsdl";
                 apiContext = "/" + ServiceId;
@@ -142,7 +144,7 @@ public class APIUtil {
             api.setSubscriptionAvailability(APIConstants.SUBSCRIPTION_TO_ALL_TENANTS);
             api.setResponseCache(APIConstants.DISABLED);
             api.setImplementation("endpoint");
-            String endpointConfig = "{\"production_endpoints\":{\"url\":\"" + apiEndpoint + "\",\"config\":null},\"wsdlendpointService\":\"" + identifier.getApiName() + "\",\"wsdlendpointPort\":\"SOAP12Endpoint\",\"endpoint_type\":\"wsdl\"}";
+            String endpointConfig = "{\"production_endpoints\":{\"url\":\"" + apiEndpoint + "\",\"config\":null},\"wsdlendpointService\":\"" + identifier.getApiName() + "\",\"wsdlendpointPort\":\"HTTPEndpoint\",\"endpoint_type\":\"wsdl\"}";
             api.setEndpointConfig(endpointConfig);
             api.setWsdlUrl(apiEndpoint);
         } catch (APIManagementException e) {
@@ -161,7 +163,7 @@ public class APIUtil {
     private Set<URITemplate> getURITemplates(String endpoint, String authType,Data data) {
         //todo improve to add sub context paths for uri templates as well
         Set<URITemplate> uriTemplates = new LinkedHashSet<URITemplate>();
-        ArrayList<org.wso2.carbon.dataservices.ui.beans.Operation> operations=data.getOperations();
+        ArrayList<Operation> operations=data.getOperations();
         ArrayList<Resource> resourceList=data.getResources();
 
            if (authType.equals(APIConstants.AUTH_NO_AUTHENTICATION)) {
@@ -173,7 +175,7 @@ public class APIUtil {
                 template.setUriTemplate("/" + resource.getPath());
                 uriTemplates.add(template);
             }
-               for (org.wso2.carbon.dataservices.ui.beans.Operation operation:operations) {
+               for (Operation operation:operations) {
                    URITemplate template = new URITemplate();
                    template.setAuthType(APIConstants.AUTH_NO_AUTHENTICATION);
                    template.setHTTPVerb("POST");
@@ -182,7 +184,7 @@ public class APIUtil {
                    uriTemplates.add(template);
                }
         } else {
-               for (org.wso2.carbon.dataservices.ui.beans.Operation operation:operations) {
+               for (Operation operation:operations) {
                    URITemplate template = new URITemplate();
                    template.setAuthType(APIConstants.AUTH_APPLICATION_OR_USER_LEVEL_TOKEN);
                    template.setHTTPVerb("POST");
@@ -221,7 +223,7 @@ public class APIUtil {
 
             APIProvider apiProvider;
             String provider;
-            if ("carbon.super".equals(tenantDomain)) {
+            if (MultitenantConstants.SUPER_TENANT_DOMAIN_NAME.equals(tenantDomain)) {
                 provider = username;
                 apiProvider = getAPIProvider(username);
             } else {
@@ -251,7 +253,7 @@ public class APIUtil {
         if (isAPIProviderReady()) {
             APIProvider apiProvider;
             String provider;
-            if ("carbon.super".equals(tenantDomain)) {
+            if (MultitenantConstants.SUPER_TENANT_DOMAIN_NAME.equals(tenantDomain)) {
                 provider = username;
                 apiProvider = getAPIProvider(username);
             } else {
