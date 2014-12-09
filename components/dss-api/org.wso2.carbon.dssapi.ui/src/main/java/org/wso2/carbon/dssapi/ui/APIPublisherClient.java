@@ -41,19 +41,15 @@ public class APIPublisherClient {
 
     public APIPublisherClient(String cookie, String url, ConfigurationContext configContext) throws AxisFault {
         String serviceEndpoint = "";
-        try {
-            serviceEndpoint = url + "APIPublisher";
-            stub = new APIPublisherStub(configContext, serviceEndpoint);
-            ServiceClient client = stub._getServiceClient();
-            Options option = client.getOptions();
-            option.setManageSession(true);
-            option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
 
-        } catch (AxisFault e) {
-            //log.error("Error occurred while connecting via stub to : " + serviceEndpoint, e);
-            throw e;
+        serviceEndpoint = url + "APIPublisher";
+        stub = new APIPublisherStub(configContext, serviceEndpoint);
+        ServiceClient client = stub._getServiceClient();
+        Options option = client.getOptions();
+        option.setManageSession(true);
+        option.setProperty(org.apache.axis2.transport.http.HTTPConstants.COOKIE_STRING, cookie);
 
-        }
+
     }
 
     /**
@@ -97,8 +93,8 @@ public class APIPublisherClient {
      * @throws RemoteException
      * @throws APIPublisherException
      */
-    public ServiceMetaData[] getServices() throws RemoteException, APIPublisherException {
-        return stub.listDssServices("", 0).getServices();
+    public ServiceMetaData[] getServices(String searchQuery) throws RemoteException, APIPublisherException {
+        return stub.listDssServices(searchQuery, 0).getServices();
     }
 
     /**
@@ -161,5 +157,17 @@ public class APIPublisherClient {
      */
     public ServiceMetaDataWrapper getServiceData(String serviceName) throws RemoteException, APIPublisherException {
         return stub.listDssServices(serviceName, 0);
+    }
+
+    /**
+     * To retrieve number of active subscriptions for the service
+     *
+     * @param serviceName name of the service
+     * @return number of subscriptions
+     * @throws RemoteException
+     */
+    public long checkNumberOfSubcriptions(String serviceName) throws RemoteException {
+        return stub.viewSubscriptions(serviceName);
+
     }
 }
