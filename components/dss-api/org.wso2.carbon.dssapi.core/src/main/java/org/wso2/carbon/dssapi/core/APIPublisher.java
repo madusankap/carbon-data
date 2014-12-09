@@ -63,6 +63,17 @@ public class APIPublisher {
     }
 
     /**
+     * To check whether API have active Subscriptions for the given service or not
+     *
+     * @param ServiceName name of the service
+     * @return no of subscriptions to api to that  DataServices
+     */
+    public long subscriptions(String ServiceName) {
+        String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+        String username = CarbonContext.getThreadLocalCarbonContext().getUsername();
+        return new APIUtil().apiSubscriptions(ServiceName, username, tenantDomain);
+    }
+    /**
      * To add an API for a service
      *
      * @param serviceId service id of the service
