@@ -3,17 +3,17 @@
     <wsdl:types>
         <xs:schema xmlns:ax2144="http://mgt.service.carbon.wso2.org/xsd" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://admin.core.dataservices.carbon.wso2.org">
             <xs:import namespace="http://mgt.service.carbon.wso2.org/xsd"></xs:import>
-            <xs:element name="removeApi">
+            <xs:element name="subscriptions">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="serviceId" nillable="true" type="xs:string"></xs:element>
+                        <xs:element minOccurs="0" name="ServiceName" nillable="true" type="xs:string"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="removeApiResponse">
+            <xs:element name="subscriptionsResponse">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element minOccurs="0" name="return" type="xs:boolean"></xs:element>
+                        <xs:element minOccurs="0" name="return" type="xs:long"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -25,20 +25,6 @@
                 </xs:complexType>
             </xs:element>
             <xs:element name="apiAvailableResponse">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="return" type="xs:boolean"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="AddApi">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element minOccurs="0" name="serviceId" nillable="true" type="xs:string"></xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-            <xs:element name="AddApiResponse">
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" type="xs:boolean"></xs:element>
@@ -69,6 +55,34 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element minOccurs="0" name="return" nillable="true" type="ax2143:ServiceMetaDataWrapper"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="AddApi">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="serviceId" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="AddApiResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="removeApi">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="serviceId" nillable="true" type="xs:string"></xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="removeApiResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="return" type="xs:boolean"></xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -132,6 +146,12 @@
     <wsdl:message name="APIPublisherException">
         <wsdl:part name="parameters" element="ns:APIPublisherException"></wsdl:part>
     </wsdl:message>
+    <wsdl:message name="subscriptionsRequest">
+        <wsdl:part name="parameters" element="ns:subscriptions"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="subscriptionsResponse">
+        <wsdl:part name="parameters" element="ns:subscriptionsResponse"></wsdl:part>
+    </wsdl:message>
     <wsdl:message name="AddApiRequest">
         <wsdl:part name="parameters" element="ns:AddApi"></wsdl:part>
     </wsdl:message>
@@ -151,6 +171,10 @@
             <wsdl:input message="tns:listDssServicesRequest" wsaw:Action="urn:listDssServices"></wsdl:input>
             <wsdl:output message="tns:listDssServicesResponse" wsaw:Action="urn:listDssServicesResponse"></wsdl:output>
             <wsdl:fault message="tns:APIPublisherException" name="APIPublisherException" wsaw:Action="urn:listDssServicesAPIPublisherException"></wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="subscriptions">
+            <wsdl:input message="tns:subscriptionsRequest" wsaw:Action="urn:subscriptions"></wsdl:input>
+            <wsdl:output message="tns:subscriptionsResponse" wsaw:Action="urn:subscriptionsResponse"></wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="AddApi">
             <wsdl:input message="tns:AddApiRequest" wsaw:Action="urn:AddApi"></wsdl:input>
@@ -188,6 +212,15 @@
             <wsdl:fault name="APIPublisherException">
                 <soap:fault use="literal" name="APIPublisherException"></soap:fault>
             </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="subscriptions">
+            <soap:operation soapAction="urn:subscriptions" style="document"></soap:operation>
+            <wsdl:input>
+                <soap:body use="literal"></soap:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"></soap:body>
+            </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="AddApi">
             <soap:operation soapAction="urn:AddApi" style="document"></soap:operation>
@@ -231,6 +264,15 @@
                 <soap12:fault use="literal" name="APIPublisherException"></soap12:fault>
             </wsdl:fault>
         </wsdl:operation>
+        <wsdl:operation name="subscriptions">
+            <soap12:operation soapAction="urn:subscriptions" style="document"></soap12:operation>
+            <wsdl:input>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"></soap12:body>
+            </wsdl:output>
+        </wsdl:operation>
         <wsdl:operation name="AddApi">
             <soap12:operation soapAction="urn:AddApi" style="document"></soap12:operation>
             <wsdl:input>
@@ -263,6 +305,15 @@
         </wsdl:operation>
         <wsdl:operation name="listDssServices">
             <http:operation location="listDssServices"></http:operation>
+            <wsdl:input>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:content type="text/xml" part="parameters"></mime:content>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="subscriptions">
+            <http:operation location="subscriptions"></http:operation>
             <wsdl:input>
                 <mime:content type="text/xml" part="parameters"></mime:content>
             </wsdl:input>

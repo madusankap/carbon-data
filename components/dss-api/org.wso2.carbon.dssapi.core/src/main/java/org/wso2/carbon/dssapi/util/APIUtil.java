@@ -232,6 +232,7 @@ public class APIUtil {
             }
             String apiVersion = "1.0.0";
             String apiName = ServiceId;
+
             APIIdentifier identifier = new APIIdentifier(provider, apiName, apiVersion);
             try {
                 apiAvailable = apiProvider.isAPIAvailable(identifier);
@@ -240,6 +241,37 @@ public class APIUtil {
             }
         }
         return apiAvailable;
+    }
+    /**
+     * To make sure that the API having active subscriptions for given service
+     * @param ServiceId    service name of the service
+     * @param username     username of the logged user
+     * @param tenantDomain tenant domain
+     * @return availability of the API
+     */
+    public long apiSubscriptions(String ServiceId, String username, String tenantDomain) {
+        long subscriptionCount = 0;
+        if (isAPIProviderReady()) {
+            APIProvider apiProvider;
+            String provider;
+            if (MultitenantConstants.SUPER_TENANT_DOMAIN_NAME.equals(tenantDomain)) {
+                provider = username;
+                apiProvider = getAPIProvider(username);
+            } else {
+                provider = username + "-AT-" + tenantDomain;
+                apiProvider = getAPIProvider(username + "@" + tenantDomain);
+            }
+            String apiVersion = "1.0.0";
+            String apiName = ServiceId;
+
+            APIIdentifier identifier = new APIIdentifier(provider, apiName, apiVersion);
+            try {
+                subscriptionCount = apiProvider.getAPISubscriptionCountByAPI(identifier);
+            } catch (APIManagementException e) {
+                e.printStackTrace();
+            }
+        }
+        return subscriptionCount;
     }
 
     /**
