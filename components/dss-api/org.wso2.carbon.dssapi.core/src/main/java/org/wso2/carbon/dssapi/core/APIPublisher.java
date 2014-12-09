@@ -46,7 +46,6 @@ public class APIPublisher {
      * @throws Exception
      */
     public ServiceMetaDataWrapper listDssServices(String searchString, int pageNumber) throws Exception {
-
         return new ServiceAdmin().listServices(DBConstants.DB_SERVICE_TYPE, searchString, pageNumber);
     }
 
