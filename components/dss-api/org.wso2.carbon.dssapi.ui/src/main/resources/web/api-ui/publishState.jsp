@@ -4,7 +4,7 @@
     <%
         boolean APIAvailability = Boolean.valueOf(request.getAttribute("APIAvailability").toString());
     %>
-    <table class="styledLeft" id="apiOperationsTable" style="margin-left: 0px;" width="100%">
+    <table class="styledLeft" id="apiOperationsTable" style="margin-left: 0;" width="100%">
         <thead>
         <tr>
             <th colspan="2" align="left"><fmt:message key="api.operations"/></th>

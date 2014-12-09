@@ -43,7 +43,7 @@
         String cookie = (String) session.getAttribute(ServerConstants.ADMIN_SERVICE_COOKIE);
 
         apiPublisherClient = new APIPublisherClient(cookie, backendServerURL, configContext);
-        serviceList = apiPublisherClient.getServices();
+        serviceList = apiPublisherClient.getServices("");
         numServices = serviceList.length;
     } catch (Exception e) {
         CarbonError carbonError = new CarbonError();
