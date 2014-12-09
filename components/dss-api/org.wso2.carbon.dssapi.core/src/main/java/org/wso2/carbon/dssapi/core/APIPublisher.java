@@ -68,7 +68,7 @@ public class APIPublisher {
      * @param ServiceName name of the service
      * @return no of subscriptions to api to that  DataServices
      */
-    public long subscriptions(String ServiceName) {
+    public long viewSubscriptions(String ServiceName) {
         String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
         String username = CarbonContext.getThreadLocalCarbonContext().getUsername();
         return new APIUtil().apiSubscriptions(ServiceName, username, tenantDomain);
@@ -79,7 +79,7 @@ public class APIPublisher {
      * @param serviceId service id of the service
      * @throws Exception
      */
-    public boolean AddApi(String serviceId) {
+    public boolean addApi(String serviceId) {
         String serviceContents;
         boolean Status = false;
         try {
