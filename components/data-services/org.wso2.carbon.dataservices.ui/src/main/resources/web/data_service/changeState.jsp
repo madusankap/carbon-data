@@ -48,8 +48,10 @@
         try {
             client = new APIPublisherClient(cookie, backendServerURL, configContext);
             Boolean isPublishRequestBool = Boolean.valueOf(isPublishRequest);
-            if (!isPublishRequestBool && client.checkNumberOfSubcriptions(serviceName)==0)
-                client.unpublishAPI(client.getServiceData(serviceName).getServices()[0]);
+            if (!isPublishRequestBool) {
+                if(client.checkNumberOfSubcriptions(serviceName)==0)
+                    client.unpublishAPI(client.getServiceData(serviceName).getServices()[0]);
+            }
             else
                 client.publishAPI(client.getServiceData(serviceName).getServices()[0]);
 

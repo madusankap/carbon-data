@@ -29,7 +29,9 @@ import org.wso2.carbon.apimgt.api.model.URITemplate;
 import org.wso2.carbon.apimgt.impl.APIConstants;
 import org.wso2.carbon.apimgt.impl.APIManagerFactory;
 import org.wso2.carbon.apimgt.impl.internal.ServiceReferenceHolder;
-import org.wso2.carbon.dataservices.ui.beans.*;
+import org.wso2.carbon.dataservices.ui.beans.Data;
+import org.wso2.carbon.dataservices.ui.beans.Operation;
+import org.wso2.carbon.dataservices.ui.beans.Resource;
 import org.wso2.carbon.utils.multitenancy.MultitenantConstants;
 
 import java.util.ArrayList;
@@ -72,7 +74,7 @@ public class APIUtil {
      * @param username   username of the logged user
      * @param tenantName tenant of the logged user
      */
-    public void addApi(String ServiceId, String username, String tenantName,Data data) {
+    public void addApi(String ServiceId, String username, String tenantName, Data data) {
         if (isAPIProviderReady()) {
             String providerName;
             String apiEndpoint;
@@ -105,7 +107,7 @@ public class APIUtil {
             } catch (APIManagementException e) {
                 e.printStackTrace();
             }
-            API api = createAPIModel(apiProvider, apiContext, apiEndpoint, authType, identifier,data);
+            API api = createAPIModel(apiProvider, apiContext, apiEndpoint, authType, identifier, data);
 
             if (api != null) {
                 try {
@@ -130,12 +132,12 @@ public class APIUtil {
      * @param identifier  API identifier
      * @return API model
      */
-    private API createAPIModel(APIProvider apiProvider, String apiContext, String apiEndpoint, String authType, APIIdentifier identifier,Data data) {
+    private API createAPIModel(APIProvider apiProvider, String apiContext, String apiEndpoint, String authType, APIIdentifier identifier, Data data) {
         API api = null;
         try {
             api = new API(identifier);
             api.setContext(apiContext);
-            api.setUriTemplates(getURITemplates(apiEndpoint, authType,data));
+            api.setUriTemplates(getURITemplates(apiEndpoint, authType, data));
             api.setVisibility(APIConstants.API_GLOBAL_VISIBILITY);
             api.addAvailableTiers(apiProvider.getTiers());
             api.setEndpointSecured(false);
@@ -160,14 +162,14 @@ public class APIUtil {
      * @param authType Authentication type
      * @return URI templates
      */
-    private Set<URITemplate> getURITemplates(String endpoint, String authType,Data data) {
+    private Set<URITemplate> getURITemplates(String endpoint, String authType, Data data) {
         //todo improve to add sub context paths for uri templates as well
         Set<URITemplate> uriTemplates = new LinkedHashSet<URITemplate>();
-        ArrayList<Operation> operations=data.getOperations();
-        ArrayList<Resource> resourceList=data.getResources();
+        ArrayList<Operation> operations = data.getOperations();
+        ArrayList<Resource> resourceList = data.getResources();
 
-           if (authType.equals(APIConstants.AUTH_NO_AUTHENTICATION)) {
-               for (Resource resource:resourceList) {
+        if (authType.equals(APIConstants.AUTH_NO_AUTHENTICATION)) {
+            for (Resource resource : resourceList) {
                 URITemplate template = new URITemplate();
                 template.setAuthType(APIConstants.AUTH_NO_AUTHENTICATION);
                 template.setHTTPVerb(resource.getMethod());
@@ -175,24 +177,24 @@ public class APIUtil {
                 template.setUriTemplate("/" + resource.getPath());
                 uriTemplates.add(template);
             }
-               for (Operation operation:operations) {
-                   URITemplate template = new URITemplate();
-                   template.setAuthType(APIConstants.AUTH_NO_AUTHENTICATION);
-                   template.setHTTPVerb("POST");
-                   template.setResourceURI(endpoint);
-                   template.setUriTemplate("/" + operation.getName());
-                   uriTemplates.add(template);
-               }
+            for (Operation operation : operations) {
+                URITemplate template = new URITemplate();
+                template.setAuthType(APIConstants.AUTH_NO_AUTHENTICATION);
+                template.setHTTPVerb("POST");
+                template.setResourceURI(endpoint);
+                template.setUriTemplate("/" + operation.getName());
+                uriTemplates.add(template);
+            }
         } else {
-               for (Operation operation:operations) {
-                   URITemplate template = new URITemplate();
-                   template.setAuthType(APIConstants.AUTH_APPLICATION_OR_USER_LEVEL_TOKEN);
-                   template.setHTTPVerb("POST");
-                   template.setResourceURI(endpoint);
-                   template.setUriTemplate("/"+operation.getName());
-                   uriTemplates.add(template);
-               }
-            for (Resource resource:resourceList) {
+            for (Operation operation : operations) {
+                URITemplate template = new URITemplate();
+                template.setAuthType(APIConstants.AUTH_APPLICATION_OR_USER_LEVEL_TOKEN);
+                template.setHTTPVerb("POST");
+                template.setResourceURI(endpoint);
+                template.setUriTemplate("/" + operation.getName());
+                uriTemplates.add(template);
+            }
+            for (Resource resource : resourceList) {
                 URITemplate template = new URITemplate();
                 if (!"OPTIONS".equals(resource.getMethod())) {
                     template.setAuthType(APIConstants.AUTH_APPLICATION_OR_USER_LEVEL_TOKEN);
@@ -201,7 +203,7 @@ public class APIUtil {
                 }
                 template.setHTTPVerb(resource.getMethod());
                 template.setResourceURI(endpoint);
-                template.setUriTemplate("/"+resource.getPath());
+                template.setUriTemplate("/" + resource.getPath());
                 uriTemplates.add(template);
             }
         }
@@ -242,8 +244,10 @@ public class APIUtil {
         }
         return apiAvailable;
     }
+
     /**
      * To make sure that the API having active subscriptions for given service
+     *
      * @param ServiceId    service name of the service
      * @param username     username of the logged user
      * @param tenantDomain tenant domain

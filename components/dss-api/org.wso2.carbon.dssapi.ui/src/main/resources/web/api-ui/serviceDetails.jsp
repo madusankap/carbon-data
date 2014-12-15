@@ -51,7 +51,7 @@
         session.setAttribute(CarbonUIMessage.ID, uiMsg);
 %>
 <script type="text/javascript">
-    location.href = "error.jsp?errorMsg=<%=uiMsg%>";
+    location.href = "error.jsp";
 </script>
 <%
         return;
