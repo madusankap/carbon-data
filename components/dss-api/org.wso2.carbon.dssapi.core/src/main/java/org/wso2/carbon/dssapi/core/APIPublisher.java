@@ -28,9 +28,12 @@ import org.wso2.carbon.dataservices.ui.beans.Data;
 import org.wso2.carbon.dssapi.util.APIUtil;
 import org.wso2.carbon.service.mgt.ServiceAdmin;
 import org.wso2.carbon.service.mgt.ServiceMetaDataWrapper;
+import org.wso2.carbon.ui.CarbonUIMessage;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+
+import static org.wso2.carbon.registry.common.ui.utils.UIUtil.getContextRoot;
 
 /**
  * To handle the API operations
@@ -72,6 +75,7 @@ public class APIPublisher {
         String username = CarbonContext.getThreadLocalCarbonContext().getUsername();
         return new APIUtil().apiSubscriptions(ServiceName, username, tenantDomain);
     }
+
     /**
      * To add an API for a service
      *
@@ -92,7 +96,7 @@ public class APIPublisher {
             new DataServiceAdmin().saveDataService(serviceId, "", data.buildXML().toString());
             String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
             String username = CarbonContext.getThreadLocalCarbonContext().getUsername();
-            new APIUtil().addApi(serviceId, username, tenantDomain,data);
+            new APIUtil().addApi(serviceId, username, tenantDomain, data);
             Status = true;
         } catch (Exception e) {
             e.printStackTrace();

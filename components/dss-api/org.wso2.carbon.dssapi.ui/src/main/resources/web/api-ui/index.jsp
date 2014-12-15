@@ -53,7 +53,7 @@
 %>
 
 <script type="text/javascript">
-    location.href = "error.jsp?errorMsg=<%=errorMsg%>";
+    location.href = "error.jsp";
 </script>
 <%
     }

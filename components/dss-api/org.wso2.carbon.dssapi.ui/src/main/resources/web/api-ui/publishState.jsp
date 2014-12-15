@@ -15,13 +15,13 @@
             <%
                 if (APIAvailability) {
             %>
-            <td style="background:url(./images/activate.gif) no-repeat left center"> &nbsp;&nbsp;&nbsp;API is Available
+            <td style="background:url(images/activate.gif) no-repeat left center"> &nbsp;&nbsp;&nbsp;API is Available
                 [ <a href="#" onclick="changeState(false);return false;">Unpublish API</a> ]
             </td>
             <%
             } else {
             %>
-            <td style="background:url(./images/deactivate.gif) no-repeat left center"> &nbsp;&nbsp;&nbsp;API is not
+            <td style="background:url(images/deactivate.gif) no-repeat left center"> &nbsp;&nbsp;&nbsp;API is not
                 Available [ <a href="#" onclick="changeState(true);return false;">Publish an API</a> ]
             </td>
             <%

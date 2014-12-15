@@ -42,7 +42,6 @@ import org.wso2.carbon.dataservices.common.DBConstants;
 import org.wso2.carbon.dataservices.core.engine.DataService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
 import java.util.Enumeration;
 
 /**

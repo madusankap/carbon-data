@@ -79,6 +79,7 @@
                             org.wso2.carbon.dssapi.stub.*;
                             version="${carbon.platform.package.export.version}",
                             org.wso2.carbon.service.mgt.xsd.*;
+                            org.wso2.carbon.dataservices.core.admin.*;
                         </Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
