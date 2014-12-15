@@ -76,8 +76,9 @@
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <Export-Package>
-                            org.wso2.carbon.dssapi.stub.*
-                            version="${carbon.platform.package.export.version}"
+                            org.wso2.carbon.dssapi.stub.*;
+                            version="${carbon.platform.package.export.version}",
+                            org.wso2.carbon.service.mgt.xsd.*;
                         </Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                     </instructions>
