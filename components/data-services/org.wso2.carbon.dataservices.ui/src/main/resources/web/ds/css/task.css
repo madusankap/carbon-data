@@ -20,3 +20,6 @@ table.styled tbody td {
     padding-top: 3px;
     padding-bottom: 3px;
 }
+.apiTable {
+    padding-top: 10px;
+}

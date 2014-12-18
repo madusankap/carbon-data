@@ -51,7 +51,6 @@
     }
 %>
 <fmt:bundle basename="org.wso2.carbon.dataservices.ui.i18n.Resources">
-
     <table class="styledLeft" id="apiOperationsTable" style="margin-left: 0px;" width="100%">
         <thead>
         <tr>
@@ -61,15 +60,30 @@
         <%
             if (APIAvailability) {
         %>
-            <tr>
-                <td>Published</td>
+            <tr class="tableOddRow">
+                <td>Published on </td>
                 <td>Last Updated</td>
             </tr>
+            <tr class="tableEvenRow">
+                <td colspan="2"><input type="button" value="Update API" onclick="changeState(false)" /> <input type="button" value="Unpublish API" /> </td>
+            </tr>
+        <tr class="tableOddRow">
+            <td colspan="2"></td>
+        </tr>
+        <tr class="tableEvenRow">
+            <td>User</td>
+            <td>Action</td>
+        </tr>
+
         <%
             } else {
         %>
-            <tr>
-                <td></td>
+            <tr class="tableOddRow">
+                <td>API Name : <input type="text" name="apiName" /> </td>
+                <td>Version : <input type="text" name="apiVersion" /> </td>
+            </tr>
+            <tr class="tableEvenRow">
+                <td colspan="2"><input type="button" value="Publish as an API" onclick="changeState(true)"></td>
             </tr>
         <%
             }
@@ -78,10 +92,9 @@
 
     <script type="text/javascript">
         jQuery.noConflict();
-        function changeState() {
+        function changeState(active) {
             try {
-                var active = document.getElementById("apiCheckBox").checked;
-                var url = '../api-ui/changeState.jsp?serviceName=<%=serviceName%>&isPublishRequest=' + active;
+                var url = '../api-ui/change_state.jsp?serviceName=<%=serviceName%>&isPublishRequest=' + active;
                 jQuery.ajax({
                     url: url,
                     async: false,
@@ -100,10 +113,6 @@
             } catch (exception) {
                 alert(exception);
             }
-
-
-            //alert(url);
-            //jQuery("#publishStateDiv").load(url, null, null );
         }
     </script>
 </fmt:bundle>
